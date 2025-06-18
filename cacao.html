@@ -27,6 +27,12 @@
       position: fixed;
     }
 
+    .user-logo {
+      width: 100px;
+      height: auto;
+      border-radius: 50%;
+    }
+
     .sidebar a {
       color: white;
       text-decoration: none;
@@ -104,6 +110,7 @@
 <body>
 
 <div class="sidebar">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Cocoa_Pods.JPG/640px-Cocoa_Pods.JPG" alt="Cacao Pods Logo" class="user-logo">
   <a href="#dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
   <a href="#overview"><i class="fas fa-file-alt"></i> Overview</a>
   <a href="#summary"><i class="fas fa-table"></i> Data Summary</a>
@@ -176,22 +183,22 @@
   const readAPI = "LJ902FFDJSJOBZYJ";
 
   async function fetchLiveData() {
-    const url = `https://api.thingspeak.com/channels/${channelID}/feeds/last.json?api_key=${readAPI}`;
+    const url = https://api.thingspeak.com/channels/${channelID}/feeds/last.json?api_key=${readAPI};
     const res = await fetch(url);
     const data = await res.json();
-    document.getElementById("temperature1").textContent = `${data.field1}°C`;
-    document.getElementById("temperature2").textContent = `${data.field2}°C`;
-    document.getElementById("temperature3").textContent = `${data.field3}°C`;
-    document.getElementById("moisture").textContent = `${data.field4}%`;
+    document.getElementById("temperature1").textContent = ${data.field1}°C;
+    document.getElementById("temperature2").textContent = ${data.field2}°C;
+    document.getElementById("temperature3").textContent = ${data.field3}°C;
+    document.getElementById("moisture").textContent = ${data.field4}%;
   }
 
   async function fetchChartData(field, canvasID, label, color) {
-    const url = `https://api.thingspeak.com/channels/${channelID}/fields/${field}.json?api_key=${readAPI}&results=100`;
+    const url = https://api.thingspeak.com/channels/${channelID}/fields/${field}.json?api_key=${readAPI}&results=100;
     const res = await fetch(url);
     const json = await res.json();
 
     const labels = json.feeds.map(f => new Date(f.created_at).toLocaleString());
-    const data = json.feeds.map(f => parseFloat(f[`field${field}`]));
+    const data = json.feeds.map(f => parseFloat(f[field${field}]));
 
     const ctx = document.getElementById(canvasID).getContext('2d');
     new Chart(ctx, {
@@ -230,7 +237,7 @@
   async function fetchWeather() {
     try {
       const location = "Dapitan";
-      const res = await fetch(`https://wttr.in/${location}?format=%t`);
+      const res = await fetch(https://wttr.in/${location}?format=%t);
       const text = await res.text();
       document.getElementById("weather").textContent = text;
     } catch (e) {
