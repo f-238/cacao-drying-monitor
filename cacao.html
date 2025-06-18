@@ -18,21 +18,19 @@
     .sidebar {
       width: 200px;
       background: #000;
-      padding-top: 2rem;
+      padding-top: 1rem;
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      align-items: center;
+      gap: 1.5rem;
       height: 100vh;
       position: fixed;
-      align-items: center;
     }
 
     .user-logo {
       width: 100px;
-      height: 100px;
+      height: auto;
       border-radius: 50%;
-      object-fit: cover;
-      margin-bottom: 1rem;
     }
 
     .sidebar a {
@@ -112,7 +110,7 @@
 <body>
 
 <div class="sidebar">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Cocoa_Pods.JPG/640px-Cocoa_Pods.JPG" alt="User Logo" class="user-logo">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Cocoa_Pods.JPG/640px-Cocoa_Pods.JPG" alt="Cacao Pods Logo" class="user-logo">
   <a href="#dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
   <a href="#overview"><i class="fas fa-file-alt"></i> Overview</a>
   <a href="#summary"><i class="fas fa-table"></i> Data Summary</a>
@@ -171,7 +169,7 @@
 
   <div id="summary" class="section">
     <h3>📊 Data Summary</h3>
-    <p>Summary of key statistics and insights from the monitoring system will be displayed here.</p>
+    <p>Data summary feature coming soon...</p>
   </div>
 
   <footer>
@@ -256,9 +254,4 @@
 
   setInterval(() => {
     fetchLiveData();
-    fetchWeather();
-  }, 20000);
-</script>
-
-</body>
-</html>
+    fetchWe
