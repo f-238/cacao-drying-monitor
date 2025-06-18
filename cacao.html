@@ -14,7 +14,7 @@
       color: #f1f1f1;
       display: flex;
     }
-    /* ───────── Sidebar ───────── */
+
     .sidebar {
       width: 200px;
       background: #000;
@@ -26,83 +26,124 @@
       height: 100vh;
       position: fixed;
     }
+
     .user-logo {
       width: 100px;
+      height: auto;
       border-radius: 50%;
-      object-fit: cover;
     }
+
     .sidebar a {
-      color: #fff;
+      color: white;
       text-decoration: none;
       padding: 1rem;
-      width: 100%;
       display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1rem;
+      transition: background 0.2s;
+      width: 100%;
       justify-content: center;
-      gap: 8px;
-      transition: background .2s;
+    }
+
+    .sidebar a:hover {
+      background: #1f1f1f;
+    }
+
+    .main {
+      margin-left: 200px;
+      padding: 2rem;
+      flex: 1;
+    }
+
+    header {
+      background: radial-gradient(circle at center, #ffffff, #a2d2ff, #b5ead7);
+      color: #000;
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 600;
+      border-radius: 1rem;
+    }
+
+    .section {
+      margin: 1.5rem auto;
+      padding: 1rem;
+      background: #1e1e1e;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .data-box {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .sensor-card {
+      background: #2e2e2e;
+      padding: 1rem;
+      border-radius: 10px;
+      width: 140px;
+      text-align: center;
+    }
+
+    .sensor-card h3 {
+      margin: 0.5rem 0;
       font-size: 1rem;
     }
-    .sidebar a:hover { background:#1f1f1f; }
-    /* ───────── Main content ───────── */
-    .main { margin-left: 200px; padding: 2rem; flex: 1; }
-    header{
-      background: radial-gradient(circle at center,#fff,#a2d2ff,#b5ead7);
-      color:#000;
-      text-align:center;
-      padding:1.5rem;
-      border-radius:1rem;
-      font-size:1.5rem;
-      font-weight:600;
+
+    .sensor-card p {
+      font-size: 1.5rem;
+      font-weight: bold;
     }
-    .section{
-      margin:1.5rem auto;
-      padding:1rem;
-      background:#1e1e1e;
-      border-radius:12px;
-      box-shadow:0 2px 12px rgba(0,0,0,.3);
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.9rem;
+      color: #aaa;
     }
-    .data-box{
-      display:flex;justify-content:space-around;flex-wrap:wrap;gap:1rem;
-    }
-    .sensor-card{
-      background:#2e2e2e;
-      padding:1rem;border-radius:10px;width:140px;text-align:center;
-    }
-    .sensor-card h3{margin:.4rem 0;font-size:1rem}
-    .sensor-card p{font-size:1.5rem;font-weight:700}
-    table{width:100%;border-collapse:collapse;margin-top:.5rem}
-    th,td{border:1px solid #333;padding:.4rem;text-align:center}
-    th{background:#222;color:#f1f1f1}
-    footer{text-align:center;padding:2rem;font-size:.9rem;color:#aaa}
   </style>
 </head>
 <body>
 
-<!-- ╭─ Sidebar ─────────────────────────── -->
 <div class="sidebar">
-  <!-- cacao‑pods logo -->
-  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Cocoa_pods.jpg/512px-Cocoa_pods.jpg"
-       alt="Cacao Pods Logo" class="user-logo">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Cocoa_Pods.JPG/640px-Cocoa_Pods.JPG" alt="Cacao Pods Logo" class="user-logo">
   <a href="#dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
   <a href="#overview"><i class="fas fa-file-alt"></i> Overview</a>
-  <a href="#data-summary" id="summary-link"><i class="fas fa-table"></i> Data&nbsp;Summary</a>
+  <a href="#summary"><i class="fas fa-table"></i> Data Summary</a>
 </div>
 
-<!-- ╭─ Main content ─────────────────────── -->
 <div class="main">
   <header>
     Development and Implementation of a Wireless Monitoring System for Theobroma Cacao Drying Process
   </header>
 
-  <!-- Dashboard -->
   <div id="dashboard">
     <div class="section">
       <div class="data-box">
-        <div class="sensor-card"><h3>Temperature 1</h3><p id="temperature1">--</p></div>
-        <div class="sensor-card"><h3>Temperature 2</h3><p id="temperature2">--</p></div>
-        <div class="sensor-card"><h3>Temperature 3</h3><p id="temperature3">--</p></div>
-        <div class="sensor-card"><h3>Moisture %</h3><p id="moisture">--</p></div>
-        <div class="sensor-card"><h3>Weather</h3><p id="weather">--</p></div>
+        <div class="sensor-card">
+          <h3>Temperature 1</h3>
+          <p id="temperature1">--</p>
+        </div>
+        <div class="sensor-card">
+          <h3>Temperature 2</h3>
+          <p id="temperature2">--</p>
+        </div>
+        <div class="sensor-card">
+          <h3>Temperature 3</h3>
+          <p id="temperature3">--</p>
+        </div>
+        <div class="sensor-card">
+          <h3>Moisture</h3>
+          <p id="moisture">--</p>
+        </div>
+        <div class="sensor-card">
+          <h3>Weather</h3>
+          <p id="weather">--</p>
+        </div>
       </div>
     </div>
 
@@ -119,107 +160,103 @@
     </div>
   </div>
 
-  <!-- Overview text -->
   <div id="overview" class="section">
     <h3>📘 Thesis Overview</h3>
     <p>
-      <strong>Development and Implementation of a Wireless Monitoring System for Theobroma Cacao Drying Process</strong>
-      investigates a low‑power wireless sensor network to monitor temperature, humidity and moisture during cacao‑bean
-      drying. Real‑time data allows farmers to optimize drying conditions, increase quality consistency, and embrace
-      data‑driven post‑harvest practices.
+      This thesis, titled <strong>"Development and Implementation of a Wireless Monitoring System for Theobroma Cacao Drying Process"</strong>, aims to design and implement a monitoring system that uses wireless sensor networks to track and analyze environmental parameters crucial to the cacao bean drying process. The system gathers real-time data on temperature, humidity, and moisture content to improve drying efficiency and bean quality. By leveraging low-power communication technologies and automation principles, this project enhances the post-harvest handling process of cacao, promoting sustainability and data-driven agriculture.
     </p>
   </div>
 
-  <!-- Data Summary -->
-  <div id="data-summary" class="section">
-    <h3>📊 Daily Summary — <span id="summary-date">–</span></h3>
-    <table>
-      <thead><tr><th>Sensor</th><th>Min</th><th>Max</th><th>Avg</th></tr></thead>
-      <tbody id="summary-table"><tr><td colspan="4">Load summary…</td></tr></tbody>
-    </table>
+  <div id="summary" class="section">
+    <h3>📊 Data Summary</h3>
+    <p>Data summary feature coming soon...</p>
   </div>
 
-  <footer>&copy; 2025 Cacao Drying Monitoring • Powered by ThingSpeak</footer>
+  <footer>
+    &copy; 2025 Cacao Drying Monitoring • Powered by ThingSpeak
+  </footer>
 </div>
 
-<!-- ╭─ Scripts ──────────────────────────── -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-const channelID = 2770965;
-const readAPI   = "LJ902FFDJSJOBZYJ";
+  const channelID = "2770965";
+  const readAPI = "LJ902FFDJSJOBZYJ";
 
-/* ───────── Live cards ───────── */
-async function fetchLiveData(){
-  const url = `https://api.thingspeak.com/channels/${channelID}/feeds/last.json?api_key=${readAPI}`;
-  const d   = await (await fetch(url)).json();
-  document.getElementById("temperature1").textContent = `${d.field1}°C`;
-  document.getElementById("temperature2").textContent = `${d.field2}°C`;
-  document.getElementById("temperature3").textContent = `${d.field3}°C`;
-  document.getElementById("moisture").textContent     = `${d.field4}%`;
-}
-
-/* ───────── Weather (simple) ───────── */
-async function fetchWeather(){
-  try{
-    const t = await (await fetch("https://wttr.in/Dapitan?format=%t")).text();
-    document.getElementById("weather").textContent = t;
-  }catch{ document.getElementById("weather").textContent = "N/A"; }
-}
-
-/* ───────── Draw chart helper ───────── */
-async function drawChart(field, canvasID, label, color){
-  const url = `https://api.thingspeak.com/channels/${channelID}/fields/${field}.json?api_key=${readAPI}&results=100`;
-  const j   = await (await fetch(url)).json();
-  const labels = j.feeds.map(f=>new Date(f.created_at).toLocaleString());
-  const data   = j.feeds.map(f=> parseFloat(f["field"+field]));
-  new Chart(document.getElementById(canvasID),{
-    type:'line',
-    data:{ labels, datasets:[{label,data,borderColor:color,fill:false,tension:0.1}]},
-    options:{responsive:true,scales:{x:{ticks:{maxTicksLimit:10}},y:{beginAtZero:false}}}
-  });
-}
-
-/* ───────── Daily Summary ───────── */
-async function loadDailySummary(){
-  const sensors = [
-    {name:"Temperature 1 (°C)", field:1},
-    {name:"Temperature 2 (°C)", field:2},
-    {name:"Temperature 3 (°C)", field:3},
-    {name:"Moisture (%)",      field:4}
-  ];
-  const end   = new Date();
-  const start = new Date(end.getTime() - 24*60*60*1000);
-  document.getElementById("summary-date").textContent = end.toLocaleDateString();
-  const tbody = document.getElementById("summary-table");
-  tbody.innerHTML = "";
-  for(const s of sensors){
-    const url = `https://api.thingspeak.com/channels/${channelID}/fields/${s.field}.json?api_key=${readAPI}`+
-                `&start=${start.toISOString()}&end=${end.toISOString()}`;
-    const jj  = await (await fetch(url)).json();
-    const vals = jj.feeds.map(f=>parseFloat(f["field"+s.field])).filter(v=>!isNaN(v));
-    const min = vals.length ? Math.min(...vals).toFixed(2) : "–";
-    const max = vals.length ? Math.max(...vals).toFixed(2) : "–";
-    const avg = vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(2) : "–";
-    const tr  = document.createElement("tr");
-    tr.innerHTML = `<td>${s.name}</td><td>${min}</td><td>${max}</td><td>${avg}</td>`;
-    tbody.appendChild(tr);
+  async function fetchLiveData() {
+    const url = `https://api.thingspeak.com/channels/${channelID}/feeds/last.json?api_key=${readAPI}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    document.getElementById("temperature1").textContent = `${data.field1}°C`;
+    document.getElementById("temperature2").textContent = `${data.field2}°C`;
+    document.getElementById("temperature3").textContent = `${data.field3}°C`;
+    document.getElementById("moisture").textContent = `${data.field4}%`;
   }
-}
 
-/* ───────── Initial load ───────── */
-fetchLiveData();
-fetchWeather();
-drawChart(1,"tempChart1","Temperature 1 (°C)","#ff6b6b");
-drawChart(2,"tempChart2","Temperature 2 (°C)","#f59f00");
-drawChart(3,"tempChart3","Temperature 3 (°C)","#845ef7");
-drawChart(4,"moistureChart","Moisture (%)","#51cf66");
-loadDailySummary();
+  async function fetchChartData(field, canvasID, label, color) {
+    const url = `https://api.thingspeak.com/channels/${channelID}/fields/${field}.json?api_key=${readAPI}&results=100`;
+    const res = await fetch(url);
+    const json = await res.json();
 
-/* ───────── Refresh loops ───────── */
-setInterval(()=>{fetchLiveData();fetchWeather();},20000);
+    const labels = json.feeds.map(f => new Date(f.created_at).toLocaleString());
+    const data = json.feeds.map(f => parseFloat(f[`field${field}`]));
 
-/* ───────── Load summary on click ───────── */
-document.getElementById("summary-link").addEventListener("click", loadDailySummary);
+    const ctx = document.getElementById(canvasID).getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label,
+          data,
+          fill: false,
+          borderColor: color,
+          tension: 0.1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Date and Time'
+            },
+            ticks: {
+              autoSkip: true,
+              maxTicksLimit: 10
+            }
+          },
+          y: {
+            beginAtZero: false
+          }
+        }
+      }
+    });
+  }
+
+  async function fetchWeather() {
+    try {
+      const location = "Dapitan";
+      const res = await fetch(`https://wttr.in/${location}?format=%t`);
+      const text = await res.text();
+      document.getElementById("weather").textContent = text;
+    } catch (e) {
+      document.getElementById("weather").textContent = "N/A";
+    }
+  }
+
+  fetchLiveData();
+  fetchWeather();
+  fetchChartData(1, "tempChart1", "Temperature 1 (°C)", "#ff6b6b");
+  fetchChartData(2, "tempChart2", "Temperature 2 (°C)", "#f59f00");
+  fetchChartData(3, "tempChart3", "Temperature 3 (°C)", "#845ef7");
+  fetchChartData(4, "moistureChart", "Moisture (%)", "#51cf66");
+
+  setInterval(() => {
+    fetchLiveData();
+    fetchWeather();
+  }, 20000);
 </script>
+
 </body>
 </html>
