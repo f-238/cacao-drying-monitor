@@ -41,11 +41,6 @@
       background: #1f1f1f;
     }
 
-    .sidebar a.logout {
-      margin-top: auto;
-      color: #ff4d4d;
-    }
-
     .main {
       margin-left: 200px;
       padding: 2rem;
@@ -106,9 +101,8 @@
 <body>
 
 <div class="sidebar">
-  <a href="#"><i class="fas fa-chart-line"></i> Dashboard</a>
+  <a href="#dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
   <a href="#overview"><i class="fas fa-file-alt"></i> Overview</a>
-  <a href="#" class="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
 </div>
 
 <div class="main">
@@ -116,48 +110,50 @@
     Development and Implementation of a Wireless Monitoring System for Theobroma Cacao Drying Process
   </header>
 
-  <div id="overview" class="section">
-    <h3>📄 Thesis Overview</h3>
-    <p>
-      This thesis presents the design and deployment of a wireless monitoring system tailored for the drying process of <em>Theobroma cacao</em> beans. It integrates sensors to monitor temperature, humidity, and moisture, utilizing LoRa technology to wirelessly transmit real-time data. The aim is to optimize post-harvest drying conditions and improve the quality and consistency of cacao bean drying using a cost-effective, energy-efficient, and remotely accessible solution.
-    </p>
-  </div>
+  <div id="dashboard">
+    <div class="section">
+      <div class="data-box">
+        <div class="sensor-card">
+          <h3>Temperature 1</h3>
+          <p id="temperature1">--</p>
+        </div>
+        <div class="sensor-card">
+          <h3>Temperature 2</h3>
+          <p id="temperature2">--</p>
+        </div>
+        <div class="sensor-card">
+          <h3>Temperature 3</h3>
+          <p id="temperature3">--</p>
+        </div>
+        <div class="sensor-card">
+          <h3>Moisture</h3>
+          <p id="moisture">--</p>
+        </div>
+        <div class="sensor-card">
+          <h3>Weather</h3>
+          <p id="weather">--</p>
+        </div>
+      </div>
+    </div>
 
-  <div class="section">
-    <div class="data-box">
-      <div class="sensor-card">
-        <h3>Temperature 1</h3>
-        <p id="temperature1">--</p>
-      </div>
-      <div class="sensor-card">
-        <h3>Temperature 2</h3>
-        <p id="temperature2">--</p>
-      </div>
-      <div class="sensor-card">
-        <h3>Temperature 3</h3>
-        <p id="temperature3">--</p>
-      </div>
-      <div class="sensor-card">
-        <h3>Moisture</h3>
-        <p id="moisture">--</p>
-      </div>
-      <div class="sensor-card">
-        <h3>Weather</h3>
-        <p id="weather">--</p>
-      </div>
+    <div class="section">
+      <h3>🌡️ Temperature Trends</h3>
+      <canvas id="tempChart1"></canvas>
+      <canvas id="tempChart2"></canvas>
+      <canvas id="tempChart3"></canvas>
+    </div>
+
+    <div class="section">
+      <h3>💧 Moisture Level Trends</h3>
+      <canvas id="moistureChart"></canvas>
     </div>
   </div>
 
-  <div class="section">
-    <h3>🌡️ Temperature Trends</h3>
-    <canvas id="tempChart1"></canvas>
-    <canvas id="tempChart2"></canvas>
-    <canvas id="tempChart3"></canvas>
-  </div>
-
-  <div class="section">
-    <h3>💧 Moisture Level Trends</h3>
-    <canvas id="moistureChart"></canvas>
+  <div id="overview" class="section">
+    <h3>📘 Thesis Overview</h3>
+    <p>
+      This thesis, titled <strong>"Development and Implementation of a Wireless Monitoring System for Theobroma Cacao Drying Process"</strong>, aims to design and implement a monitoring system that uses wireless sensor networks to track and analyze environmental parameters crucial to the cacao bean drying process. The system gathers real-time data on temperature, humidity, and moisture content to improve drying efficiency and bean quality. By leveraging low-power communication technologies and automation principles, this project enhances the post-harvest handling process of cacao, promoting sustainability and data-driven agriculture.
+    </p>
   </div>
 
   <footer>
