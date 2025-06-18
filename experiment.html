@@ -1,0 +1,230 @@
+<!-- 
+  Cacao Drying Monitor Dashboard (revamped per user request)
+  - Left sidebar: only two menu items (Dashboard, General Overview)
+  - Bottom navigation bar: 7 Font‑Awesome icon tabs (first = dashboard, last = logout/red)
+  - Body & nav backgrounds: black; main section with radial gradient (white → sky‑blue → light‑green)
+  - Charts: Temp 1/2/3 + Moisture in Dashboard section, hourly‑aggregated overview chart + daily summary table in General Overview.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cacao Drying Monitor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --sidebar-width: 200px;
+      --primary: #4F86F7;   /* sky‑blue */
+      --accent: #51cf66;   /* light green */
+      --card-bg: #1e1e1e;
+      --text-light: #f1f1f1;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'Inter',sans-serif;
+      background:#000;
+      color:var(--text-light);
+      display:flex;
+      min-height:100vh;
+    }
+    /* ───── Left Sidebar (2‑item) ───── */
+    .sidebar{
+      position:fixed;left:0;top:0;
+      width:var(--sidebar-width);height:100vh;
+      background:#000;border-right:1px solid #222;
+      display:flex;flex-direction:column;align-items:center;
+      padding-top:1rem;
+    }
+    .sidebar a{
+      width:90%;text-align:center;text-decoration:none;color:var(--text-light);
+      padding:0.8rem 0;margin:0.3rem 0;border-radius:8px;
+    }
+    .sidebar a.active{background:var(--primary);color:#000;font-weight:600;}
+    .sidebar a:hover{background:#222;}
+
+    /* ───── Main content wrapper ───── */
+    .content{margin-left:var(--sidebar-width);flex:1;display:flex;flex-direction:column;}
+
+    /* Radial‑gradient header area */
+    header{
+      padding:2rem 1rem;text-align:center;
+      background:radial-gradient(circle at center, #ffffff 0%, var(--primary) 50%, var(--accent) 100%);
+      border-bottom-left-radius:30px;border-bottom-right-radius:30px;
+    }
+    header h1{font-size:1.5rem;color:#000;}
+
+    /* Sections */
+    .section{margin:1rem;padding:1rem;background:#111;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.3);}
+    .section h2{margin-bottom:0.5rem;color:var(--accent);} 
+    canvas{margin-top:1rem;background:#000;border-radius:8px;}
+
+    /* Cards */
+    .card-grid{display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-around;}
+    .sensor-card{
+      background:var(--card-bg);padding:1rem;border-radius:10px;width:140px;text-align:center;
+    }
+    .sensor-card h3{font-size:0.9rem;color:var(--primary);margin-bottom:0.3rem;}
+    .sensor-card p{font-size:1.4rem;font-weight:700;}
+
+    /* Summary table */
+    table{width:100%;border-collapse:collapse;margin-top:0.5rem;color:#ddd;}
+    th,td{border:1px solid #333;padding:0.4rem;text-align:center;}
+    th{background:#222;font-weight:600;}
+
+    /* ───── Bottom navigation bar (7 tabs) ───── */
+    .bottom-nav{
+      position:fixed;bottom:0;left:0;width:100%;height:55px;background:#000;border-top:1px solid #222;
+      display:flex;justify-content:space-around;align-items:center;z-index:999;
+    }
+    .bottom-nav a{color:#999;font-size:1.2rem;text-decoration:none;text-align:center;flex:1;padding-top:5px;}
+    .bottom-nav a.active{color:var(--primary);}  
+    .bottom-nav a.logout{color:#f03e3e;} /* red logout */
+
+    @media(max-width:768px){
+      :root{--sidebar-width:0}
+      .sidebar{display:none}
+      .content{margin-left:0}
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar with 2 items -->
+  <nav class="sidebar">
+    <a href="#dashboard" class="active"><i class="fa-solid fa-gauge"></i><br>Dashboard</a>
+    <a href="#overview"><i class="fa-solid fa-table"></i><br>Overview</a>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="content">
+    <header id="dashboard"><h1>Cacao Drying – IoT Monitoring</h1></header>
+
+    <!-- Dashboard Section -->
+    <section class="section" id="dashcards">
+      <div class="card-grid">
+        <div class="sensor-card"><h3>Temp 1</h3><p id="valT1">--</p></div>
+        <div class="sensor-card"><h3>Temp 2</h3><p id="valT2">--</p></div>
+        <div class="sensor-card"><h3>Temp 3</h3><p id="valT3">--</p></div>
+        <div class="sensor-card"><h3>Moisture</h3><p id="valM">--</p></div>
+        <div class="sensor-card"><h3>Weather</h3><p id="valW">--</p></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Temperature 1 Chart</h2>
+      <canvas id="chartT1"></canvas>
+    </section>
+    <section class="section">
+      <h2>Temperature 2 Chart</h2>
+      <canvas id="chartT2"></canvas>
+    </section>
+    <section class="section">
+      <h2>Temperature 3 Chart</h2>
+      <canvas id="chartT3"></canvas>
+    </section>
+    <section class="section">
+      <h2>Moisture % Chart</h2>
+      <canvas id="chartM"></canvas>
+    </section>
+
+    <!-- Overview Section -->
+    <header id="overview"><h1>General Overview</h1></header>
+    <section class="section">
+      <h2>Daily Summary (hourly groups)</h2>
+      <canvas id="chartHourly"></canvas>
+      <table>
+        <thead><tr><th>Metric</th><th>Min</th><th>Max</th><th>Avg</th></tr></thead>
+        <tbody id="summaryRows">
+          <tr><td>Temp 1 °C</td><td>–</td><td>–</td><td>–</td></tr>
+          <tr><td>Temp 2 °C</td><td>–</td><td>–</td><td>–</td></tr>
+          <tr><td>Temp 3 °C</td><td>–</td><td>–</td><td>–</td></tr>
+          <tr><td>Moisture %</td><td>–</td><td>–</td><td>–</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <!-- Bottom nav (7 tabs) -->
+  <nav class="bottom-nav">
+    <a href="#dashboard" class="active"><i class="fa-solid fa-gauge"></i></a>
+    <a href="#" ><i class="fa-solid fa-chart-line"></i></a>
+    <a href="#" ><i class="fa-solid fa-droplet"></i></a>
+    <a href="#" ><i class="fa-solid fa-database"></i></a>
+    <a href="#" ><i class="fa-solid fa-gear"></i></a>
+    <a href="#overview"><i class="fa-solid fa-table"></i></a>
+    <a href="#" class="logout"><i class="fa-solid fa-right-from-bracket"></i></a>
+  </nav>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const channelID = 2770965;
+    const readKey="LJ902FFDJSJOBZYJ";
+    const weatherKey="YOUR_OPENWEATHERMAP_API_KEY"; // replace
+    const city="Cebu,PH";
+
+    async function fetchLast() {
+      const url=`https://api.thingspeak.com/channels/${channelID}/feeds/last.json?api_key=${readKey}`;
+      const d=await (await fetch(url)).json();
+      document.getElementById('valT1').textContent=`${d.field1}°C`;
+      document.getElementById('valT2').textContent=`${d.field2}°C`;
+      document.getElementById('valT3').textContent=`${d.field3}°C`;
+      document.getElementById('valM').textContent=`${d.field4}%`;
+    }
+
+    async function fetchWeather(){
+      try{
+        const w=await (await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${weatherKey}&units=metric`)).json();
+        document.getElementById('valW').textContent=`${w.weather[0].description}, ${w.main.temp}°C`;
+      }catch{document.getElementById('valW').textContent='weather error';}
+    }
+
+    async function drawChart(field,canvas,label,color){
+      const url=`https://api.thingspeak.com/channels/${channelID}/fields/${field}.json?api_key=${readKey}&results=100`;
+      const j=await (await fetch(url)).json();
+      const labels=j.feeds.map(f=>new Date(f.created_at).toLocaleString());
+      const data=j.feeds.map(f=>parseFloat(f[`field${field}`]));
+      new Chart(document.getElementById(canvas),{type:'line',data:{labels,datasets:[{label,data,borderColor:color,fill:false,tension:0.1}]},options:{responsive:true,scales:{x:{ticks:{maxTicksLimit:8},title:{display:true,text:'Date & Time'}},y:{beginAtZero:false}}}});
+      return data;
+    }
+
+    async function hourlyChart(){
+      const url=`https://api.thingspeak.com/channels/${channelID}/fields/1.json?api_key=${readKey}&days=1`;
+      const j=await (await fetch(url)).json();
+      const buckets={};
+      j.feeds.forEach(f=>{
+        const h=new Date(f.created_at);h.setMinutes(0,0,0);
+        const key=h.toLocaleTimeString();
+        if(!buckets[key])buckets[key]=[];
+        buckets[key].push(parseFloat(f.field1));
+      });
+      const labels=Object.keys(buckets);
+      const data=labels.map(k=>buckets[k].reduce((a,b)=>a+b)/buckets[k].length);
+      new Chart(document.getElementById('chartHourly'),{type:'bar',data:{labels,datasets:[{label:'Temp 1 avg °C',data,backgroundColor:var(--primary)}]},options:{responsive:true,scales:{x:{ticks:{maxTicksLimit:8},title:{display:true,text:'Hour'}},y:{beginAtZero:false}}}});
+    }
+
+    async function init(){
+      fetchLast();fetchWeather();
+      drawChart(1,'chartT1','Temp 1 °C','#ff6b6b').then(arr=>updateSummary(0,arr));
+      drawChart(2,'chartT2','Temp 2 °C','#f59f00').then(arr=>updateSummary(1,arr));
+      drawChart(3,'chartT3','Temp 3 °C','#845ef7').then(arr=>updateSummary(2,arr));
+      drawChart(4,'chartM','Moisture %','#51cf66').then(arr=>updateSummary(3,arr));
+      hourlyChart();
+      setInterval(()=>{fetchLast();fetchWeather();},20000);
+    }
+
+    function updateSummary(rowIdx,arr){
+      const row=document.getElementById('summaryRows').rows[rowIdx];
+      const filtered=arr.filter(v=>!isNaN(v));
+      const min=Math.min(...filtered).toFixed(2);
+      const max=Math.max(...filtered).toFixed(2);
+      const avg=(filtered.reduce((a,b)=>a+b,0)/filtered.length).toFixed(2);
+      row.cells[1].textContent=min;
+      row.cells[2].textContent=max;
+      row.cells[3].textContent=avg;
+    }
+
+    window.addEventListener('DOMContentLoaded',init);
+  </script>
+</body>
+</html>
