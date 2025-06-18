@@ -7,90 +7,100 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
     body {
       font-family: 'Inter', sans-serif;
+      margin: 0;
+      background: #121212;
+      color: #f1f1f1;
       display: flex;
-      height: 100vh;
-      background-color: #121212;
-      color: #f8f9fa;
     }
-    aside {
+
+    .sidebar {
       width: 200px;
-      background-color: #1e1e1e;
-      padding: 2rem 1rem;
+      background: #000;
+      padding-top: 2rem;
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 2rem;
+      height: 100vh;
+      position: fixed;
     }
-    aside a {
-      color: #f8f9fa;
+
+    .sidebar a {
+      color: white;
       text-decoration: none;
-      font-size: 1rem;
+      padding: 1rem;
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 0.5rem;
-      border-radius: 8px;
-      transition: background 0.3s;
+      font-size: 1rem;
+      transition: background 0.2s;
     }
-    aside a:hover {
-      background-color: #333;
-    }
-    aside a.logout {
-      color: #ff4d4f;
-      margin-top: auto;
-    }
-    main {
-      flex-grow: 1;
-      padding: 2rem;
-    }
-    header {
-      background: radial-gradient(circle at top left, #ffffff, #87ceeb, #90ee90);
-      color: #121212;
-      padding: 1rem;
-      text-align: center;
-      font-size: 1.8rem;
-      font-weight: 600;
-      border-radius: 10px;
-      margin-bottom: 2rem;
-    }
-    .section {
-      margin-bottom: 2rem;
-      padding: 1rem;
+
+    .sidebar a:hover {
       background: #1f1f1f;
-      border-radius: 12px;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
     }
+
+    .main {
+      margin-left: 200px;
+      padding: 2rem;
+      flex: 1;
+    }
+
+    .logo-container {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .logo-container img {
+      width: 80px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+    }
+
+    header {
+      background: radial-gradient(circle at center, #ffffff, #a2d2ff, #b5ead7);
+      color: #000;
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 600;
+      border-radius: 1rem;
+    }
+
+    .section {
+      margin: 1.5rem auto;
+      padding: 1rem;
+      background: #1e1e1e;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+    }
+
     .data-box {
       display: flex;
       justify-content: space-around;
       flex-wrap: wrap;
       gap: 1rem;
     }
+
     .sensor-card {
-      background: #2c2c2c;
+      background: #2e2e2e;
       padding: 1rem;
       border-radius: 10px;
       width: 140px;
       text-align: center;
-      color: #fff;
     }
+
     .sensor-card h3 {
       margin: 0.5rem 0;
       font-size: 1rem;
     }
+
     .sensor-card p {
       font-size: 1.5rem;
       font-weight: bold;
     }
-    canvas {
-      margin-top: 2rem;
-    }
+
     footer {
       text-align: center;
       padding: 2rem;
@@ -101,58 +111,75 @@
 </head>
 <body>
 
-<aside>
-  <a href="#"><i class="fas fa-chart-line"></i> Dashboard</a>
-  <a href="#"><i class="fas fa-list"></i> Overview</a>
-  <a href="#" class="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
-</aside>
+<div class="sidebar">
+  <div class="logo-container">
+    <img src="https://via.placeholder.com/80" alt="User Logo">
+  </div>
+  <a href="#dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
+  <a href="#overview"><i class="fas fa-file-alt"></i> Overview</a>
+  <a href="#data-summary"><i class="fas fa-database"></i> Data Summary</a>
+</div>
 
-<main>
+<div class="main">
   <header>
     Development and Implementation of a Wireless Monitoring System for Theobroma Cacao Drying Process
   </header>
 
-  <div class="section">
-    <div class="data-box">
-      <div class="sensor-card">
-        <h3>Temperature 1</h3>
-        <p id="temperature1">--</p>
+  <div id="dashboard">
+    <div class="section">
+      <div class="data-box">
+        <div class="sensor-card">
+          <h3>Temperature 1</h3>
+          <p id="temperature1">--</p>
+        </div>
+        <div class="sensor-card">
+          <h3>Temperature 2</h3>
+          <p id="temperature2">--</p>
+        </div>
+        <div class="sensor-card">
+          <h3>Temperature 3</h3>
+          <p id="temperature3">--</p>
+        </div>
+        <div class="sensor-card">
+          <h3>Moisture</h3>
+          <p id="moisture">--</p>
+        </div>
+        <div class="sensor-card">
+          <h3>Weather</h3>
+          <p id="weather">--</p>
+        </div>
       </div>
-      <div class="sensor-card">
-        <h3>Temperature 2</h3>
-        <p id="temperature2">--</p>
-      </div>
-      <div class="sensor-card">
-        <h3>Temperature 3</h3>
-        <p id="temperature3">--</p>
-      </div>
-      <div class="sensor-card">
-        <h3>Moisture</h3>
-        <p id="moisture">--</p>
-      </div>
-      <div class="sensor-card">
-        <h3>Weather</h3>
-        <p id="weather">--</p>
-      </div>
+    </div>
+
+    <div class="section">
+      <h3>🌡️ Temperature Trends</h3>
+      <canvas id="tempChart1"></canvas>
+      <canvas id="tempChart2"></canvas>
+      <canvas id="tempChart3"></canvas>
+    </div>
+
+    <div class="section">
+      <h3>💧 Moisture Level Trends</h3>
+      <canvas id="moistureChart"></canvas>
     </div>
   </div>
 
-  <div class="section">
-    <h3>🌡️ Temperature Trends</h3>
-    <canvas id="tempChart1"></canvas>
-    <canvas id="tempChart2"></canvas>
-    <canvas id="tempChart3"></canvas>
+  <div id="overview" class="section">
+    <h3>📘 Thesis Overview</h3>
+    <p>
+      This thesis, titled <strong>"Development and Implementation of a Wireless Monitoring System for Theobroma Cacao Drying Process"</strong>, aims to design and implement a monitoring system that uses wireless sensor networks to track and analyze environmental parameters crucial to the cacao bean drying process. The system gathers real-time data on temperature, humidity, and moisture content to improve drying efficiency and bean quality. By leveraging low-power communication technologies and automation principles, this project enhances the post-harvest handling process of cacao, promoting sustainability and data-driven agriculture.
+    </p>
   </div>
 
-  <div class="section">
-    <h3>💧 Moisture Level Trends</h3>
-    <canvas id="moistureChart"></canvas>
+  <div id="data-summary" class="section">
+    <h3>📊 Data Summary</h3>
+    <p>This section will provide summarized data statistics in future updates.</p>
   </div>
 
   <footer>
-    &copy; 2025 Cacao Monitor • Updated every 3 hours • Powered by ThingSpeak
+    &copy; 2025 Cacao Drying Monitoring • Powered by ThingSpeak
   </footer>
-</main>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -237,4 +264,3 @@
 
 </body>
 </html>
-
