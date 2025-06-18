@@ -13,6 +13,7 @@
       background: #121212;
       color: #f1f1f1;
       display: flex;
+      min-height: 100vh;
     }
 
     .sidebar {
@@ -21,9 +22,13 @@
       padding-top: 2rem;
       display: flex;
       flex-direction: column;
-      gap: 2rem;
-      height: 100vh;
+      gap: 1rem;
       position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 1000;
+      transition: transform 0.3s ease-in-out;
     }
 
     .sidebar a {
@@ -44,6 +49,15 @@
     .sidebar a.logout {
       margin-top: auto;
       color: #ff4d4d;
+    }
+
+    .hamburger {
+      display: none;
+      font-size: 1.5rem;
+      color: white;
+      padding: 1rem;
+      background: #000;
+      border: none;
     }
 
     .main {
@@ -83,6 +97,12 @@
       border-radius: 10px;
       width: 140px;
       text-align: center;
+      animation: fadeIn 0.8s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .sensor-card h3 {
@@ -101,13 +121,38 @@
       font-size: 0.9rem;
       color: #aaa;
     }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      .sidebar.active {
+        transform: translateX(0);
+      }
+      .hamburger {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1100;
+      }
+      .main {
+        margin-left: 0;
+        padding-top: 4rem;
+      }
+    }
   </style>
 </head>
 <body>
 
-<div class="sidebar">
+<button class="hamburger" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+
+<div class="sidebar" id="sidebar">
   <a href="#"><i class="fas fa-chart-line"></i> Dashboard</a>
-  <a href="#overview"><i class="fas fa-file-alt"></i> Overview</a>
+  <a href="#"><i class="fas fa-file-alt"></i> Overview</a>
+  <a href="#"><i class="fas fa-cog"></i> Settings</a>
+  <a href="#"><i class="fas fa-clipboard-list"></i> Logs</a>
+  <a href="#"><i class="fas fa-bell"></i> Alerts</a>
   <a href="#" class="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
 </div>
 
@@ -115,13 +160,6 @@
   <header>
     Development and Implementation of a Wireless Monitoring System for Theobroma Cacao Drying Process
   </header>
-
-  <div id="overview" class="section">
-    <h3>📄 Thesis Overview</h3>
-    <p>
-      This thesis presents the design and deployment of a wireless monitoring system tailored for the drying process of <em>Theobroma cacao</em> beans. It integrates sensors to monitor temperature, humidity, and moisture, utilizing LoRa technology to wirelessly transmit real-time data. The aim is to optimize post-harvest drying conditions and improve the quality and consistency of cacao bean drying using a cost-effective, energy-efficient, and remotely accessible solution.
-    </p>
-  </div>
 
   <div class="section">
     <div class="data-box">
@@ -169,6 +207,10 @@
 <script>
   const channelID = "2770965";
   const readAPI = "LJ902FFDJSJOBZYJ";
+
+  function toggleSidebar() {
+    document.getElementById("sidebar").classList.toggle("active");
+  }
 
   async function fetchLiveData() {
     const url = `https://api.thingspeak.com/channels/${channelID}/feeds/last.json?api_key=${readAPI}`;
