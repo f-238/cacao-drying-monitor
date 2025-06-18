@@ -14,7 +14,6 @@
       color: #f1f1f1;
       display: flex;
     }
-    /* ───────── Sidebar ───────── */
     .sidebar {
       width: 200px;
       background: #000;
@@ -25,11 +24,6 @@
       gap: 1.5rem;
       height: 100vh;
       position: fixed;
-    }
-    .user-logo {
-      width: 100px;
-      border-radius: 50%;
-      object-fit: cover;
     }
     .sidebar a {
       color: #fff;
@@ -42,59 +36,89 @@
       transition: background .2s;
       font-size: 1rem;
     }
-    .sidebar a:hover { background:#1f1f1f; }
-    /* ───────── Main content ───────── */
-    .main { margin-left: 200px; padding: 2rem; flex: 1; }
-    header{
+    .sidebar a:hover { background: #1f1f1f; }
+    .sidebar a#logout-btn {
+      color: #ff4d4d;
+      margin-top: auto;
+      font-weight: bold;
+    }
+    .main {
+      margin-left: 200px;
+      padding: 2rem;
+      flex: 1;
+    }
+    header {
       background: radial-gradient(circle at center,#fff,#a2d2ff,#b5ead7);
-      color:#000;
-      text-align:center;
-      padding:1.5rem;
-      border-radius:1rem;
-      font-size:1.5rem;
-      font-weight:600;
+      color: #000;
+      text-align: center;
+      padding: 1.5rem;
+      border-radius: 1rem;
+      font-size: 1.5rem;
+      font-weight: 600;
     }
-    .section{
-      margin:1.5rem auto;
-      padding:1rem;
-      background:#1e1e1e;
-      border-radius:12px;
-      box-shadow:0 2px 12px rgba(0,0,0,.3);
+    .section {
+      margin: 1.5rem auto;
+      padding: 1rem;
+      background: #1e1e1e;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.3);
     }
-    .data-box{
-      display:flex;justify-content:space-around;flex-wrap:wrap;gap:1rem;
+    .data-box {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
-    .sensor-card{
-      background:#2e2e2e;
-      padding:1rem;border-radius:10px;width:140px;text-align:center;
+    .sensor-card {
+      background: #2e2e2e;
+      padding: 1rem;
+      border-radius: 10px;
+      width: 140px;
+      text-align: center;
     }
-    .sensor-card h3{margin:.4rem 0;font-size:1rem}
-    .sensor-card p{font-size:1.5rem;font-weight:700}
-    table{width:100%;border-collapse:collapse;margin-top:.5rem}
-    th,td{border:1px solid #333;padding:.4rem;text-align:center}
-    th{background:#222;color:#f1f1f1}
-    footer{text-align:center;padding:2rem;font-size:.9rem;color:#aaa}
+    .sensor-card h3 {
+      margin: .4rem 0;
+      font-size: 1rem;
+    }
+    .sensor-card p {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: .5rem;
+    }
+    th, td {
+      border: 1px solid #333;
+      padding: .4rem;
+      text-align: center;
+    }
+    th {
+      background: #222;
+      color: #f1f1f1;
+    }
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: .9rem;
+      color: #aaa;
+    }
   </style>
 </head>
 <body>
-
-<!-- ╭─ Sidebar ─────────────────────────── -->
 <div class="sidebar">
-  <!-- cacao‑pods logo -->
-  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Cocoa_pods.jpg/512px-Cocoa_pods.jpg"
-       alt="Cacao Pods Logo" class="user-logo">
   <a href="#dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
   <a href="#overview"><i class="fas fa-file-alt"></i> Overview</a>
   <a href="#data-summary" id="summary-link"><i class="fas fa-table"></i> Data&nbsp;Summary</a>
+  <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
 </div>
 
-<!-- ╭─ Main content ─────────────────────── -->
 <div class="main">
   <header>
     Development and Implementation of a Wireless Monitoring System for Theobroma Cacao Drying Process
   </header>
 
-  <!-- Dashboard -->
   <div id="dashboard">
     <div class="section">
       <div class="data-box">
@@ -119,7 +143,6 @@
     </div>
   </div>
 
-  <!-- Overview text -->
   <div id="overview" class="section">
     <h3>📘 Thesis Overview</h3>
     <p>
@@ -130,7 +153,6 @@
     </p>
   </div>
 
-  <!-- Data Summary -->
   <div id="data-summary" class="section">
     <h3>📊 Daily Summary — <span id="summary-date">–</span></h3>
     <table>
@@ -142,84 +164,95 @@
   <footer>&copy; 2025 Cacao Drying Monitoring • Powered by ThingSpeak</footer>
 </div>
 
-<!-- ╭─ Scripts ──────────────────────────── -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 const channelID = 2770965;
 const readAPI   = "LJ902FFDJSJOBZYJ";
 
-/* ───────── Live cards ───────── */
-async function fetchLiveData(){
+async function fetchLiveData() {
   const url = `https://api.thingspeak.com/channels/${channelID}/feeds/last.json?api_key=${readAPI}`;
-  const d   = await (await fetch(url)).json();
+  const d = await (await fetch(url)).json();
   document.getElementById("temperature1").textContent = `${d.field1}°C`;
   document.getElementById("temperature2").textContent = `${d.field2}°C`;
   document.getElementById("temperature3").textContent = `${d.field3}°C`;
-  document.getElementById("moisture").textContent     = `${d.field4}%`;
+  document.getElementById("moisture").textContent = `${d.field4}%`;
 }
 
-/* ───────── Weather (simple) ───────── */
-async function fetchWeather(){
-  try{
+async function fetchWeather() {
+  try {
     const t = await (await fetch("https://wttr.in/Dapitan?format=%t")).text();
     document.getElementById("weather").textContent = t;
-  }catch{ document.getElementById("weather").textContent = "N/A"; }
+  } catch {
+    document.getElementById("weather").textContent = "N/A";
+  }
 }
 
-/* ───────── Draw chart helper ───────── */
-async function drawChart(field, canvasID, label, color){
+async function drawChart(field, canvasID, label, color) {
   const url = `https://api.thingspeak.com/channels/${channelID}/fields/${field}.json?api_key=${readAPI}&results=100`;
-  const j   = await (await fetch(url)).json();
-  const labels = j.feeds.map(f=>new Date(f.created_at).toLocaleString());
-  const data   = j.feeds.map(f=> parseFloat(f["field"+field]));
-  new Chart(document.getElementById(canvasID),{
-    type:'line',
-    data:{ labels, datasets:[{label,data,borderColor:color,fill:false,tension:0.1}]},
-    options:{responsive:true,scales:{x:{ticks:{maxTicksLimit:10}},y:{beginAtZero:false}}}
+  const j = await (await fetch(url)).json();
+  const labels = j.feeds.map(f => new Date(f.created_at).toLocaleString());
+  const data = j.feeds.map(f => parseFloat(f[`field${field}`]));
+  new Chart(document.getElementById(canvasID), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{ label, data, borderColor: color, fill: false, tension: 0.1 }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: { ticks: { maxTicksLimit: 10 } },
+        y: { beginAtZero: false }
+      }
+    }
   });
 }
 
-/* ───────── Daily Summary ───────── */
-async function loadDailySummary(){
+async function loadDailySummary() {
   const sensors = [
-    {name:"Temperature 1 (°C)", field:1},
-    {name:"Temperature 2 (°C)", field:2},
-    {name:"Temperature 3 (°C)", field:3},
-    {name:"Moisture (%)",      field:4}
+    { name: "Temperature 1 (°C)", field: 1 },
+    { name: "Temperature 2 (°C)", field: 2 },
+    { name: "Temperature 3 (°C)", field: 3 },
+    { name: "Moisture (%)", field: 4 }
   ];
-  const end   = new Date();
-  const start = new Date(end.getTime() - 24*60*60*1000);
+  const end = new Date();
+  const start = new Date(end.getTime() - 24 * 60 * 60 * 1000);
   document.getElementById("summary-date").textContent = end.toLocaleDateString();
   const tbody = document.getElementById("summary-table");
   tbody.innerHTML = "";
-  for(const s of sensors){
-    const url = `https://api.thingspeak.com/channels/${channelID}/fields/${s.field}.json?api_key=${readAPI}`+
-                `&start=${start.toISOString()}&end=${end.toISOString()}`;
-    const jj  = await (await fetch(url)).json();
-    const vals = jj.feeds.map(f=>parseFloat(f["field"+s.field])).filter(v=>!isNaN(v));
+  for (const s of sensors) {
+    const url = `https://api.thingspeak.com/channels/${channelID}/fields/${s.field}.json?api_key=${readAPI}&start=${start.toISOString()}&end=${end.toISOString()}`;
+    const jj = await (await fetch(url)).json();
+    const vals = jj.feeds.map(f => parseFloat(f[`field${s.field}`])).filter(v => !isNaN(v));
     const min = vals.length ? Math.min(...vals).toFixed(2) : "–";
     const max = vals.length ? Math.max(...vals).toFixed(2) : "–";
-    const avg = vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(2) : "–";
-    const tr  = document.createElement("tr");
+    const avg = vals.length ? (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(2) : "–";
+    const tr = document.createElement("tr");
     tr.innerHTML = `<td>${s.name}</td><td>${min}</td><td>${max}</td><td>${avg}</td>`;
     tbody.appendChild(tr);
   }
 }
 
-/* ───────── Initial load ───────── */
 fetchLiveData();
 fetchWeather();
-drawChart(1,"tempChart1","Temperature 1 (°C)","#ff6b6b");
-drawChart(2,"tempChart2","Temperature 2 (°C)","#f59f00");
-drawChart(3,"tempChart3","Temperature 3 (°C)","#845ef7");
-drawChart(4,"moistureChart","Moisture (%)","#51cf66");
+drawChart(1, "tempChart1", "Temperature 1 (°C)", "#ff6b6b");
+drawChart(2, "tempChart2", "Temperature 2 (°C)", "#f59f00");
+drawChart(3, "tempChart3", "Temperature 3 (°C)", "#845ef7");
+drawChart(4, "moistureChart", "Moisture (%)", "#51cf66");
 loadDailySummary();
 
-/* ───────── Refresh loops ───────── */
-setInterval(()=>{fetchLiveData();fetchWeather();},20000);
+setInterval(() => {
+  fetchLiveData();
+  fetchWeather();
+}, 20000);
 
-/* ───────── Load summary on click ───────── */
 document.getElementById("summary-link").addEventListener("click", loadDailySummary);
+document.getElementById("logout-btn").addEventListener("click", function (e) {
+  e.preventDefault();
+  sessionStorage.clear();
+  localStorage.clear();
+  window.location.href = "login.html";
+});
 </script>
 </body>
 </html>
