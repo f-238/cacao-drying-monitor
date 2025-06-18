@@ -1,1 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cacao Drying Monitor Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body{font-family:'Inter',sans-serif;margin:0;background:#121212;color:#f1f1f1;display:flex}
+    .sidebar{width:200px;background:#000;padding-top:1rem;display:flex;flex-direction:column;align-items:center;gap:1.5rem;height:100vh;position:fixed}
+    .sidebar a{color:#fff;text-decoration:none;padding:1rem;width:100%;display:flex;justify-content:center;gap:8px;transition:background .2s;font-size:1rem}
+    .sidebar a:hover{background:#1f1f1f}
+    .sidebar a#logout-btn{color:#ff4d4d;margin-top:auto;font-weight:700}
+    .main{margin-left:200px;padding:2rem;flex:1}
+    header{background:radial-gradient(circle at center,#fff,#a2d2ff,#b5ead7);color:#000;text-align:center;padding:1.5rem;border-radius:1rem;font-size:1.5rem;font-weight:600}
+    .section{margin:1.5rem auto;padding:1rem;background:#1e1e1e;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.3)}
+    .data-box{display:flex;justify-content:space-around;flex-wrap:wrap;gap:1rem}
+    .sensor-card{background:#2e2e2e;padding:1rem;border-radius:10px;width:140px;text-align:center}
+    .sensor-card h3{margin:.4rem 0;font-size:1rem}
+    .sensor-card p{font-size:1.5rem;font-weight:700}
+    canvas{margin:1rem 0;background:#000;border-radius:8px}
+    h4{margin:1rem 0 .3rem;font-weight:600;color:#a2d2ff}
+    footer{text-align:center;padding:2rem;font-size:.9rem;color:#aaa}
+  </style>
+</head>
+<body>
+<div class="sidebar">
+  <a href="#dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
+  <a href="#overview"><i class="fas fa-file-alt"></i> Overview</a>
+  <a href="#data-summary" id="summary-link"><i class="fas fa-table"></i> Data&nbsp;Summary</a>
+  <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+</div>
+
+<div class="main">
+  <header>
+    Development and Implementation of a Wireless Monitoring System for Theobroma Cacao Drying Process
+  </header>
+
+  <!-- Dashboard -->
+  <div id="dashboard">
+    <div class="section">
+      <div class="data-box">
+        <div class="sensor-card"><h3>Temperature 1</h3><p id="temperature1">--</p></div>
+        <div class="sensor-card"><h3>Temperature 2</h3><p id="temperature2">--</p></div>
+        <div class="sensor-card"><h3>Temperature 3</h3><p id="temperature3">--</p></div>
+        <div class="sensor-card"><h3>Moisture %</h3><p id="moisture">--</p></div>
+        <div class="sensor-card"><h3>Weather</h3><p id="weather">--</p></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>🌡️ Temperature Trends</h3>
+      <canvas id="tempChart1"></canvas>
+      <canvas id="tempChart2"></canvas>
+      <canvas id="tempChart3"></canvas>
+    </div>
+
+    <div class="section">
+      <h3>💧 Moisture Level Trends</h3>
+      <canvas id="moistureChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Overview -->
+  <div id="overview" class="section">
+    <h3>📘 Thesis Overview</h3>
+    <p><strong>Development and Implementation of a Wireless Monitoring System for Theobroma Cacao Drying Process</strong> investigates a low‑power wireless sensor network to monitor temperature, humidity and moisture during cacao‑bean drying. Real‑time data allows farmers to optimize drying conditions, increase quality consistency, and embrace data‑driven post‑harvest practices.</p>
+  </div>
+
+  <!-- Multi‑day Data Summary with Charts -->
+  <div id="data-summary" class="section">
+    <h3>📊 Data Summary (past 5 days)</h3>
+    <div id="summary-days">Click Data Summary to load charts…</div>
+  </div>
+
+  <footer>&copy; 2025 Cacao Drying Monitoring • Powered by ThingSpeak</footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const channelID=2770965;
+const readAPI="LJ902FFDJSJOBZYJ";
+async function fetchLiveData(){const d=await(await fetch(`https://api.thingspeak.com/channels/${channelID}/feeds/last.json?api_key=${readAPI}`)).json();["temperature1","temperature2","temperature3","moisture"].forEach((id,i)=>{document.getElementById(id).textContent=`${d[`field${i+1}`]}${i<3?"°C":"%"}`})}
+async function fetchWeather(){try{document.getElementById("weather").textContent=await(await fetch("https://wttr.in/Dapitan?format=%t")).text()}catch{document.getElementById("weather").textContent="N/A"}}
+async function drawChart(f,id,label,c){const j=await(await fetch(`https://api.thingspeak.com/channels/${channelID}/fields/${f}.json?api_key=${readAPI}&results=100`)).json();const l=j.feeds.map(x=>new Date(x.created_at).toLocaleString());const d=j.feeds.map(x=>parseFloat(x[`field${f}`]));new Chart(document.getElementById(id),{type:'line',data:{labels:l,datasets:[{label,data:d,borderColor:c,fill:false,tension:.1}]},options:{responsive:true,scales:{x:{ticks:{maxTicksLimit:10}},y:{beginAtZero:false}}}})}
+function bucketBy3Hours(feeds,field){const buckets={};feeds.forEach(f=>{const date=new Date(f.created_at);const h=date.getUTCHours();const bucket=Math.floor(h/3)*3;const key=`${bucket.toString().padStart(2,'0')}:00`;const val=parseFloat(f[`field${field}`]);if(!isNaN(val)){if(!buckets[key])buckets[key]=[];buckets[key].push(val)}});return Object.keys(buckets).sort((a,b)=>parseInt(a)-parseInt(b)).map(t=>({time:t,value:buckets[t].reduce((a,b)=>a+b)/buckets[t].length}))}
+async function buildDayChart(dayOffset,index){const day=new Date();day.setUTCDate(day.getUTCDate()-dayOffset);const dateStr=day.toLocaleDateString();const container=document.getElementById("summary-days");const canvasId=`dayChart${index}`;container.insertAdjacentHTML('beforeend',`<h4>${dateStr}</h4><canvas id="${canvasId}"></canvas>`);
+  const datasets=[];const colors=["#ff6b6b","#f59f00","#845ef7","#51cf66"];for(let f=1;f<=4;f++){const startISO=day.toISOString().split('T')[0]+"T00:00:00Z";const endISO=day.toISOString().split('T')[0]+"T23:59:59Z";const url=`https://api.thingspeak.com/channels/${channelID}/fields/${f}.json?api_key=${readAPI}&start=${startISO}&end=${endISO}`;const jj=await(await fetch(url)).json();const buckets=bucketBy3Hours(jj.feeds,f);datasets.push({label:["Temp1","Temp2","Temp3","Moisture"][f-1],data:buckets.map(b=>b.value),borderColor:colors[f-1],fill:false,tension:.1})}
+  const labels=[...new Set(bucketBy3Hours(jj.feeds??[],1).map(b=>b.time))];new Chart(document.getElementById(canvasId),{type:'line',data:{labels,datasets},options:{responsive:true,plugins:{legend:{position:'top'}},scales:{x:{title:{display:true,text:'Hour (3‑hr buckets)'}},y:{title:{display:true,text:'Value'},beginAtZero:false}}}})}
+async function loadFiveDaySummary(){const container=document.getElementById('summary-days');container.innerHTML='Loading charts…';for(let i=0;i<5;i++){await buildDayChart(i,i);} }
+fetchLiveData();fetchWeather();drawChart(1,'tempChart1','Temp1 °C','#ff6b6b');drawChart(2,'tempChart2','Temp2 °C','#f59f00');drawChart(3,'tempChart3','Temp3 °C','#845ef7');drawChart(4,'moistureChart','Moisture %','#51cf66');setInterval(()=>{fetchLiveData();fetchWeather();},20000);
+document.getElementById('summary-link').addEventListener('click',loadFiveDaySummary);
+document.getElementById('logout-btn').addEventListener('click',e=>{e.preventDefault();sessionStorage.clear();localStorage.clear();window.location.href='login.html'});
+</script>
+</body>
+</html>
 
