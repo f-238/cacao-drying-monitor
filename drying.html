@@ -13,13 +13,7 @@
       background: #121212;
       color: #f1f1f1;
       display: flex;
-      flex-direction: column;
       min-height: 100vh;
-    }
-
-    .layout {
-      display: flex;
-      flex: 1;
     }
 
     .sidebar {
@@ -28,9 +22,13 @@
       padding-top: 2rem;
       display: flex;
       flex-direction: column;
-      gap: 2rem;
-      height: 100vh;
+      gap: 1rem;
       position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 1000;
+      transition: transform 0.3s ease-in-out;
     }
 
     .sidebar a {
@@ -41,17 +39,25 @@
       align-items: center;
       gap: 10px;
       font-size: 1rem;
-      transition: background 0.2s ease, transform 0.2s ease;
+      transition: background 0.2s;
     }
 
     .sidebar a:hover {
       background: #1f1f1f;
-      transform: translateX(5px);
     }
 
     .sidebar a.logout {
       margin-top: auto;
       color: #ff4d4d;
+    }
+
+    .hamburger {
+      display: none;
+      font-size: 1.5rem;
+      color: white;
+      padding: 1rem;
+      background: #000;
+      border: none;
     }
 
     .main {
@@ -68,7 +74,6 @@
       font-size: 1.5rem;
       font-weight: 600;
       border-radius: 1rem;
-      animation: fadeIn 1.5s ease-in-out;
     }
 
     .section {
@@ -77,7 +82,6 @@
       background: #1e1e1e;
       border-radius: 12px;
       box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
-      animation: fadeInUp 1s ease forwards;
     }
 
     .data-box {
@@ -93,6 +97,12 @@
       border-radius: 10px;
       width: 140px;
       text-align: center;
+      animation: fadeIn 0.8s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .sensor-card h3 {
@@ -112,98 +122,95 @@
       color: #aaa;
     }
 
-    @keyframes fadeIn {
-      0% { opacity: 0; }
-      100% { opacity: 1; }
-    }
-
-    @keyframes fadeInUp {
-      0% { opacity: 0; transform: translateY(20px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-
     @media (max-width: 768px) {
-      .layout {
-        flex-direction: column;
-      }
-
       .sidebar {
-        position: relative;
-        width: 100%;
-        height: auto;
-        flex-direction: row;
-        justify-content: space-around;
+        transform: translateX(-100%);
       }
-
+      .sidebar.active {
+        transform: translateX(0);
+      }
+      .hamburger {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1100;
+      }
       .main {
         margin-left: 0;
-        padding: 1rem;
+        padding-top: 4rem;
       }
     }
   </style>
 </head>
 <body>
-<div class="layout">
-  <div class="sidebar">
-    <a href="#"><i class="fas fa-chart-line"></i> Dashboard</a>
-    <a href="#"><i class="fas fa-file-alt"></i> Overview</a>
-    <a href="#"><i class="fas fa-cogs"></i> Settings</a>
-    <a href="#"><i class="fas fa-question-circle"></i> Help</a>
-    <a href="#" class="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
-  </div>
 
-  <div class="main">
-    <header>
-      Development and Implementation of a Wireless Monitoring System for Theobroma Cacao Drying Process
-    </header>
+<button class="hamburger" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
 
-    <div class="section">
-      <div class="data-box">
-        <div class="sensor-card">
-          <h3>Temperature 1</h3>
-          <p id="temperature1">--</p>
-        </div>
-        <div class="sensor-card">
-          <h3>Temperature 2</h3>
-          <p id="temperature2">--</p>
-        </div>
-        <div class="sensor-card">
-          <h3>Temperature 3</h3>
-          <p id="temperature3">--</p>
-        </div>
-        <div class="sensor-card">
-          <h3>Moisture</h3>
-          <p id="moisture">--</p>
-        </div>
-        <div class="sensor-card">
-          <h3>Weather</h3>
-          <p id="weather">--</p>
-        </div>
+<div class="sidebar" id="sidebar">
+  <a href="#"><i class="fas fa-chart-line"></i> Dashboard</a>
+  <a href="#"><i class="fas fa-file-alt"></i> Overview</a>
+  <a href="#"><i class="fas fa-cog"></i> Settings</a>
+  <a href="#"><i class="fas fa-clipboard-list"></i> Logs</a>
+  <a href="#"><i class="fas fa-bell"></i> Alerts</a>
+  <a href="#" class="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+</div>
+
+<div class="main">
+  <header>
+    Development and Implementation of a Wireless Monitoring System for Theobroma Cacao Drying Process
+  </header>
+
+  <div class="section">
+    <div class="data-box">
+      <div class="sensor-card">
+        <h3>Temperature 1</h3>
+        <p id="temperature1">--</p>
+      </div>
+      <div class="sensor-card">
+        <h3>Temperature 2</h3>
+        <p id="temperature2">--</p>
+      </div>
+      <div class="sensor-card">
+        <h3>Temperature 3</h3>
+        <p id="temperature3">--</p>
+      </div>
+      <div class="sensor-card">
+        <h3>Moisture</h3>
+        <p id="moisture">--</p>
+      </div>
+      <div class="sensor-card">
+        <h3>Weather</h3>
+        <p id="weather">--</p>
       </div>
     </div>
-
-    <div class="section">
-      <h3>🌡️ Temperature Trends</h3>
-      <canvas id="tempChart1"></canvas>
-      <canvas id="tempChart2"></canvas>
-      <canvas id="tempChart3"></canvas>
-    </div>
-
-    <div class="section">
-      <h3>💧 Moisture Level Trends</h3>
-      <canvas id="moistureChart"></canvas>
-    </div>
-
-    <footer>
-      &copy; 2025 Cacao Drying Monitoring • Powered by ThingSpeak
-    </footer>
   </div>
+
+  <div class="section">
+    <h3>🌡️ Temperature Trends</h3>
+    <canvas id="tempChart1"></canvas>
+    <canvas id="tempChart2"></canvas>
+    <canvas id="tempChart3"></canvas>
+  </div>
+
+  <div class="section">
+    <h3>💧 Moisture Level Trends</h3>
+    <canvas id="moistureChart"></canvas>
+  </div>
+
+  <footer>
+    &copy; 2025 Cacao Drying Monitoring • Powered by ThingSpeak
+  </footer>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   const channelID = "2770965";
   const readAPI = "LJ902FFDJSJOBZYJ";
+
+  function toggleSidebar() {
+    document.getElementById("sidebar").classList.toggle("active");
+  }
 
   async function fetchLiveData() {
     const url = `https://api.thingspeak.com/channels/${channelID}/feeds/last.json?api_key=${readAPI}`;
@@ -233,53 +240,4 @@
           data,
           fill: false,
           borderColor: color,
-          tension: 0.1
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          x: {
-            title: {
-              display: true,
-              text: 'Date and Time'
-            },
-            ticks: {
-              autoSkip: true,
-              maxTicksLimit: 10
-            }
-          },
-          y: {
-            beginAtZero: false
-          }
-        }
-      }
-    });
-  }
-
-  async function fetchWeather() {
-    try {
-      const location = "Dapitan";
-      const res = await fetch(`https://wttr.in/${location}?format=%t`);
-      const text = await res.text();
-      document.getElementById("weather").textContent = text;
-    } catch (e) {
-      document.getElementById("weather").textContent = "N/A";
-    }
-  }
-
-  fetchLiveData();
-  fetchWeather();
-  fetchChartData(1, "tempChart1", "Temperature 1 (°C)", "#ff6b6b");
-  fetchChartData(2, "tempChart2", "Temperature 2 (°C)", "#f59f00");
-  fetchChartData(3, "tempChart3", "Temperature 3 (°C)", "#845ef7");
-  fetchChartData(4, "moistureChart", "Moisture (%)", "#51cf66");
-
-  setInterval(() => {
-    fetchLiveData();
-    fetchWeather();
-  }, 20000);
-</script>
-
-</body>
-</html>
+          tens
