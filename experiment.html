@@ -1,230 +1,216 @@
-<!-- 
-  Cacao Drying Monitor Dashboard (revamped per user request)
-  - Left sidebar: only two menu items (Dashboard, General Overview)
-  - Bottom navigation bar: 7 Font‑Awesome icon tabs (first = dashboard, last = logout/red)
-  - Body & nav backgrounds: black; main section with radial gradient (white → sky‑blue → light‑green)
-  - Charts: Temp 1/2/3 + Moisture in Dashboard section, hourly‑aggregated overview chart + daily summary table in General Overview.
--->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Cacao Drying Monitor</title>
+  <title>Cacao Drying Monitor Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    :root {
-      --sidebar-width: 200px;
-      --primary: #4F86F7;   /* sky‑blue */
-      --accent: #51cf66;   /* light green */
-      --card-bg: #1e1e1e;
-      --text-light: #f1f1f1;
-    }
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{
-      font-family:'Inter',sans-serif;
-      background:#000;
-      color:var(--text-light);
-      display:flex;
-      min-height:100vh;
-    }
-    /* ───── Left Sidebar (2‑item) ───── */
-    .sidebar{
-      position:fixed;left:0;top:0;
-      width:var(--sidebar-width);height:100vh;
-      background:#000;border-right:1px solid #222;
-      display:flex;flex-direction:column;align-items:center;
-      padding-top:1rem;
-    }
-    .sidebar a{
-      width:90%;text-align:center;text-decoration:none;color:var(--text-light);
-      padding:0.8rem 0;margin:0.3rem 0;border-radius:8px;
-    }
-    .sidebar a.active{background:var(--primary);color:#000;font-weight:600;}
-    .sidebar a:hover{background:#222;}
-
-    /* ───── Main content wrapper ───── */
-    .content{margin-left:var(--sidebar-width);flex:1;display:flex;flex-direction:column;}
-
-    /* Radial‑gradient header area */
-    header{
-      padding:2rem 1rem;text-align:center;
-      background:radial-gradient(circle at center, #ffffff 0%, var(--primary) 50%, var(--accent) 100%);
-      border-bottom-left-radius:30px;border-bottom-right-radius:30px;
-    }
-    header h1{font-size:1.5rem;color:#000;}
-
-    /* Sections */
-    .section{margin:1rem;padding:1rem;background:#111;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.3);}
-    .section h2{margin-bottom:0.5rem;color:var(--accent);} 
-    canvas{margin-top:1rem;background:#000;border-radius:8px;}
-
-    /* Cards */
-    .card-grid{display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-around;}
-    .sensor-card{
-      background:var(--card-bg);padding:1rem;border-radius:10px;width:140px;text-align:center;
-    }
-    .sensor-card h3{font-size:0.9rem;color:var(--primary);margin-bottom:0.3rem;}
-    .sensor-card p{font-size:1.4rem;font-weight:700;}
-
-    /* Summary table */
-    table{width:100%;border-collapse:collapse;margin-top:0.5rem;color:#ddd;}
-    th,td{border:1px solid #333;padding:0.4rem;text-align:center;}
-    th{background:#222;font-weight:600;}
-
-    /* ───── Bottom navigation bar (7 tabs) ───── */
-    .bottom-nav{
-      position:fixed;bottom:0;left:0;width:100%;height:55px;background:#000;border-top:1px solid #222;
-      display:flex;justify-content:space-around;align-items:center;z-index:999;
-    }
-    .bottom-nav a{color:#999;font-size:1.2rem;text-decoration:none;text-align:center;flex:1;padding-top:5px;}
-    .bottom-nav a.active{color:var(--primary);}  
-    .bottom-nav a.logout{color:#f03e3e;} /* red logout */
-
-    @media(max-width:768px){
-      :root{--sidebar-width:0}
-      .sidebar{display:none}
-      .content{margin-left:0}
-    }
+    body { font-family: 'Inter', sans-serif; margin: 0; background: #121212; color: #f1f1f1; display: flex; }
+    .sidebar { width: 200px; background: #000; padding-top: 1rem; display: flex; flex-direction: column; align-items: center; gap: 1.5rem; height: 100vh; position: fixed; }
+    .sidebar a { color: #fff; text-decoration: none; padding: 1rem; width: 100%; display: flex; justify-content: center; gap: 8px; transition: background .2s; font-size: 1rem; }
+    .sidebar a:hover { background: #1f1f1f; }
+    .sidebar a#logout-btn { color: #ff4d4d; margin-top: auto; font-weight: 700; }
+    .main { margin-left: 200px; padding: 2rem; flex: 1; }
+    header { background: radial-gradient(circle at center, #fff, #a2d2ff, #b5ead7); color: #000; text-align: center; padding: 1.5rem; border-radius: 1rem; font-size: 1.5rem; font-weight: 600; }
+    .section { margin: 1.5rem auto; padding: 1rem; background: #1e1e1e; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.3); }
+    .data-box { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 1rem; }
+    .sensor-card { background: #2e2e2e; padding: 1rem; border-radius: 10px; width: 140px; text-align: center; }
+    .sensor-card h3 { margin: .4rem 0; font-size: 1rem; }
+    .sensor-card p { font-size: 1.5rem; font-weight: 700; }
+    canvas { margin: 1rem 0; background: #000; border-radius: 8px; }
+    h4 { margin: 1rem 0 .3rem; font-weight: 600; color: #a2d2ff; }
+    footer { text-align: center; padding: 2rem; font-size: .9rem; color: #aaa; }
+    table, th, td { border: 1px solid #444; }
   </style>
 </head>
 <body>
-  <!-- Sidebar with 2 items -->
-  <nav class="sidebar">
-    <a href="#dashboard" class="active"><i class="fa-solid fa-gauge"></i><br>Dashboard</a>
-    <a href="#overview"><i class="fa-solid fa-table"></i><br>Overview</a>
-  </nav>
+<div class="sidebar">
+  <a href="#dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
+  <a href="#overview"><i class="fas fa-file-alt"></i> Overview</a>
+  <a href="#data-summary" id="summary-link"><i class="fas fa-table"></i> Data&nbsp;Summary</a>
+  <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+</div>
 
-  <!-- Main Content -->
-  <div class="content">
-    <header id="dashboard"><h1>Cacao Drying – IoT Monitoring</h1></header>
+<div class="main">
+  <header>
+    Development and Implementation of a Wireless Monitoring System for Theobroma Cacao Drying Process
+  </header>
 
-    <!-- Dashboard Section -->
-    <section class="section" id="dashcards">
-      <div class="card-grid">
-        <div class="sensor-card"><h3>Temp 1</h3><p id="valT1">--</p></div>
-        <div class="sensor-card"><h3>Temp 2</h3><p id="valT2">--</p></div>
-        <div class="sensor-card"><h3>Temp 3</h3><p id="valT3">--</p></div>
-        <div class="sensor-card"><h3>Moisture</h3><p id="valM">--</p></div>
-        <div class="sensor-card"><h3>Weather</h3><p id="valW">--</p></div>
+  <!-- Dashboard -->
+  <div id="dashboard">
+    <div class="section">
+      <div class="data-box">
+        <div class="sensor-card"><h3>Temperature 1</h3><p id="temperature1">--</p></div>
+        <div class="sensor-card"><h3>Temperature 2</h3><p id="temperature2">--</p></div>
+        <div class="sensor-card"><h3>Temperature 3</h3><p id="temperature3">--</p></div>
+        <div class="sensor-card"><h3>Moisture %</h3><p id="moisture">--</p></div>
+        <div class="sensor-card"><h3>Weather</h3><p id="weather">--</p></div>
       </div>
-    </section>
+    </div>
 
-    <section class="section">
-      <h2>Temperature 1 Chart</h2>
-      <canvas id="chartT1"></canvas>
-    </section>
-    <section class="section">
-      <h2>Temperature 2 Chart</h2>
-      <canvas id="chartT2"></canvas>
-    </section>
-    <section class="section">
-      <h2>Temperature 3 Chart</h2>
-      <canvas id="chartT3"></canvas>
-    </section>
-    <section class="section">
-      <h2>Moisture % Chart</h2>
-      <canvas id="chartM"></canvas>
-    </section>
+    <div class="section">
+      <h3>🌡️ Temperature Trends</h3>
+      <canvas id="tempChart1"></canvas>
+      <canvas id="tempChart2"></canvas>
+      <canvas id="tempChart3"></canvas>
+    </div>
 
-    <!-- Overview Section -->
-    <header id="overview"><h1>General Overview</h1></header>
-    <section class="section">
-      <h2>Daily Summary (hourly groups)</h2>
-      <canvas id="chartHourly"></canvas>
-      <table>
-        <thead><tr><th>Metric</th><th>Min</th><th>Max</th><th>Avg</th></tr></thead>
-        <tbody id="summaryRows">
-          <tr><td>Temp 1 °C</td><td>–</td><td>–</td><td>–</td></tr>
-          <tr><td>Temp 2 °C</td><td>–</td><td>–</td><td>–</td></tr>
-          <tr><td>Temp 3 °C</td><td>–</td><td>–</td><td>–</td></tr>
-          <tr><td>Moisture %</td><td>–</td><td>–</td><td>–</td></tr>
-        </tbody>
-      </table>
-    </section>
+    <div class="section">
+      <h3>💧 Moisture Level Trends</h3>
+      <canvas id="moistureChart"></canvas>
+    </div>
   </div>
 
-  <!-- Bottom nav (7 tabs) -->
-  <nav class="bottom-nav">
-    <a href="#dashboard" class="active"><i class="fa-solid fa-gauge"></i></a>
-    <a href="#" ><i class="fa-solid fa-chart-line"></i></a>
-    <a href="#" ><i class="fa-solid fa-droplet"></i></a>
-    <a href="#" ><i class="fa-solid fa-database"></i></a>
-    <a href="#" ><i class="fa-solid fa-gear"></i></a>
-    <a href="#overview"><i class="fa-solid fa-table"></i></a>
-    <a href="#" class="logout"><i class="fa-solid fa-right-from-bracket"></i></a>
-  </nav>
+  <!-- Overview -->
+  <div id="overview" class="section">
+    <h3>📘 Thesis Overview</h3>
+    <p><strong>Development and Implementation of a Wireless Monitoring System for Theobroma Cacao Drying Process</strong> investigates a low‑power wireless sensor network to monitor temperature, humidity and moisture during cacao‑bean drying. Real‑time data allows farmers to optimize drying conditions, increase quality consistency, and embrace data‑driven post‑harvest practices.</p>
+  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-    const channelID = 2770965;
-    const readKey="LJ902FFDJSJOBZYJ";
-    const weatherKey="YOUR_OPENWEATHERMAP_API_KEY"; // replace
-    const city="Cebu,PH";
+  <!-- Data Summary (Summary Table Only) -->
+  <div id="data-summary" class="section">
+    <h3>📊 Data Summary (Today)</h3>
+    <div id="summary-days">
+      <table id="summary-table" style="width:100%;text-align:center;border-collapse:collapse;margin-top:1rem">
+        <thead>
+          <tr style="background-color:#2e2e2e;">
+            <th style="padding:8px;">Parameter</th>
+            <th style="padding:8px;">9:00 AM</th>
+            <th style="padding:8px;">12:00 PM</th>
+            <th style="padding:8px;">3:00 PM</th>
+            <th style="padding:8px;">6:00 PM</th>
+          </tr>
+        </thead>
+        <tbody id="summary-body">
+          <tr><td colspan="5" style="padding:10px;">Click "Data Summary" to load data…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
-    async function fetchLast() {
-      const url=`https://api.thingspeak.com/channels/${channelID}/feeds/last.json?api_key=${readKey}`;
-      const d=await (await fetch(url)).json();
-      document.getElementById('valT1').textContent=`${d.field1}°C`;
-      document.getElementById('valT2').textContent=`${d.field2}°C`;
-      document.getElementById('valT3').textContent=`${d.field3}°C`;
-      document.getElementById('valM').textContent=`${d.field4}%`;
+  <footer>&copy; 2025 Cacao Drying Monitoring • Powered by ThingSpeak</footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const channelID = 2770965;
+const readAPI = "LJ902FFDJSJOBZYJ";
+
+async function fetchLiveData() {
+  const d = await (await fetch(`https://api.thingspeak.com/channels/${channelID}/feeds/last.json?api_key=${readAPI}`)).json();
+  ["temperature1", "temperature2", "temperature3", "moisture"].forEach((id, i) => {
+    document.getElementById(id).textContent = `${d[`field${i + 1}`]}${i < 3 ? "°C" : "%"}`;
+  });
+}
+
+async function fetchWeather() {
+  try {
+    document.getElementById("weather").textContent = await (await fetch("https://wttr.in/Dapitan?format=%t")).text();
+  } catch {
+    document.getElementById("weather").textContent = "N/A";
+  }
+}
+
+function bucketBy3Hours(feeds, field) {
+  const buckets = {};
+  feeds.forEach(f => {
+    const date = new Date(f.created_at);
+    date.setHours(date.getHours() + 8); // Convert UTC to PH Time (UTC+8)
+    const hour = date.getHours();
+    const bucket = Math.floor(hour / 3) * 3;
+    const key = `${bucket.toString().padStart(2, '0')}:00`;
+    const val = parseFloat(f[`field${field}`]);
+    if (!isNaN(val)) {
+      if (!buckets[key]) buckets[key] = [];
+      buckets[key].push(val);
     }
+  });
+  return Object.keys(buckets).sort((a, b) => parseInt(a) - parseInt(b))
+    .map(t => ({ time: t, value: buckets[t].reduce((a, b) => a + b) / buckets[t].length }));
+}
 
-    async function fetchWeather(){
-      try{
-        const w=await (await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${weatherKey}&units=metric`)).json();
-        document.getElementById('valW').textContent=`${w.weather[0].description}, ${w.main.temp}°C`;
-      }catch{document.getElementById('valW').textContent='weather error';}
-    }
+async function buildSummaryTableForToday() {
+  const times = ["09:00", "12:00", "15:00", "18:00"];
+  const labels = ["Temperature 1", "Temperature 2", "Temperature 3", "Moisture Level"];
+  const colors = ["#ff6b6b", "#f59f00", "#845ef7", "#51cf66"];
+  const body = document.getElementById("summary-body");
+  body.innerHTML = "";
 
-    async function drawChart(field,canvas,label,color){
-      const url=`https://api.thingspeak.com/channels/${channelID}/fields/${field}.json?api_key=${readKey}&results=100`;
-      const j=await (await fetch(url)).json();
-      const labels=j.feeds.map(f=>new Date(f.created_at).toLocaleString());
-      const data=j.feeds.map(f=>parseFloat(f[`field${field}`]));
-      new Chart(document.getElementById(canvas),{type:'line',data:{labels,datasets:[{label,data,borderColor:color,fill:false,tension:0.1}]},options:{responsive:true,scales:{x:{ticks:{maxTicksLimit:8},title:{display:true,text:'Date & Time'}},y:{beginAtZero:false}}}});
-      return data;
-    }
+  for (let field = 1; field <= 4; field++) {
+    const now = new Date();
+    const startISO = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0).toISOString();
+    const endISO = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59).toISOString();
+    const url = `https://api.thingspeak.com/channels/${channelID}/fields/${field}.json?api_key=${readAPI}&start=${startISO}&end=${endISO}`;
+    const json = await (await fetch(url)).json();
+    const buckets = bucketBy3Hours(json.feeds, field);
 
-    async function hourlyChart(){
-      const url=`https://api.thingspeak.com/channels/${channelID}/fields/1.json?api_key=${readKey}&days=1`;
-      const j=await (await fetch(url)).json();
-      const buckets={};
-      j.feeds.forEach(f=>{
-        const h=new Date(f.created_at);h.setMinutes(0,0,0);
-        const key=h.toLocaleTimeString();
-        if(!buckets[key])buckets[key]=[];
-        buckets[key].push(parseFloat(f.field1));
+    const row = document.createElement("tr");
+    row.innerHTML = `<td style="padding:8px;">${labels[field - 1]}</td>`;
+
+    times.forEach(time => {
+      const bucket = buckets.find(b => b.time.startsWith(time));
+      row.innerHTML += `<td style="padding:8px;color:${colors[field - 1]}">${bucket ? bucket.value.toFixed(1) : "--"}</td>`;
+    });
+
+    body.appendChild(row);
+  }
+}
+
+function drawChart(f, id, label, c) {
+  fetch(`https://api.thingspeak.com/channels/${channelID}/fields/${f}.json?api_key=${readAPI}&results=100`)
+    .then(res => res.json())
+    .then(j => {
+      const l = j.feeds.map(x => new Date(x.created_at).toLocaleString());
+      const d = j.feeds.map(x => parseFloat(x[`field${f}`]));
+      new Chart(document.getElementById(id), {
+        type: 'line',
+        data: { labels: l, datasets: [{ label, data: d, borderColor: c, fill: false, tension: .1 }] },
+        options: {
+          responsive: true,
+          scales: {
+            x: { ticks: { maxTicksLimit: 10 } },
+            y: { beginAtZero: false }
+          }
+        }
       });
-      const labels=Object.keys(buckets);
-      const data=labels.map(k=>buckets[k].reduce((a,b)=>a+b)/buckets[k].length);
-      new Chart(document.getElementById('chartHourly'),{type:'bar',data:{labels,datasets:[{label:'Temp 1 avg °C',data,backgroundColor:var(--primary)}]},options:{responsive:true,scales:{x:{ticks:{maxTicksLimit:8},title:{display:true,text:'Hour'}},y:{beginAtZero:false}}}});
-    }
+    });
+}
 
-    async function init(){
-      fetchLast();fetchWeather();
-      drawChart(1,'chartT1','Temp 1 °C','#ff6b6b').then(arr=>updateSummary(0,arr));
-      drawChart(2,'chartT2','Temp 2 °C','#f59f00').then(arr=>updateSummary(1,arr));
-      drawChart(3,'chartT3','Temp 3 °C','#845ef7').then(arr=>updateSummary(2,arr));
-      drawChart(4,'chartM','Moisture %','#51cf66').then(arr=>updateSummary(3,arr));
-      hourlyChart();
-      setInterval(()=>{fetchLast();fetchWeather();},20000);
-    }
+fetchLiveData();
+fetchWeather();
+drawChart(1, 'tempChart1', 'Temp1 °C', '#ff6b6b');
+drawChart(2, 'tempChart2', 'Temp2 °C', '#f59f00');
+drawChart(3, 'tempChart3', 'Temp3 °C', '#845ef7');
+drawChart(4, 'moistureChart', 'Moisture %', '#51cf66');
 
-    function updateSummary(rowIdx,arr){
-      const row=document.getElementById('summaryRows').rows[rowIdx];
-      const filtered=arr.filter(v=>!isNaN(v));
-      const min=Math.min(...filtered).toFixed(2);
-      const max=Math.max(...filtered).toFixed(2);
-      const avg=(filtered.reduce((a,b)=>a+b,0)/filtered.length).toFixed(2);
-      row.cells[1].textContent=min;
-      row.cells[2].textContent=max;
-      row.cells[3].textContent=avg;
-    }
+setInterval(() => {
+  fetchLiveData();
+  fetchWeather();
+}, 20000);
 
-    window.addEventListener('DOMContentLoaded',init);
-  </script>
+// Load summary table
+document.getElementById('summary-link').addEventListener('click', loadFiveDaySummary);
+async function loadFiveDaySummary() {
+  const body = document.getElementById('summary-body');
+  body.innerHTML = "<tr><td colspan='5' style='padding:10px;'>Loading summary data…</td></tr>";
+  await buildSummaryTableForToday();
+}
+
+// Auto-refresh summary table every 5 minutes when visible
+setInterval(() => {
+  if (location.hash === "#data-summary") {
+    loadFiveDaySummary();
+  }
+}, 300000);
+
+document.getElementById('logout-btn').addEventListener('click', e => {
+  e.preventDefault();
+  sessionStorage.clear();
+  localStorage.clear();
+  window.location.href = 'login.html';
+});
+</script>
 </body>
 </html>
