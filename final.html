@@ -49,18 +49,6 @@
         <div class="sensor-card"><h3>Weather</h3><p id="weather">--</p></div>
       </div>
     </div>
-
-    <div class="section">
-      <h3>🌡️ Temperature Trends</h3>
-      <canvas id="tempChart1"></canvas>
-      <canvas id="tempChart2"></canvas>
-      <canvas id="tempChart3"></canvas>
-    </div>
-
-    <div class="section">
-      <h3>💧 Moisture Level Trends</h3>
-      <canvas id="moistureChart"></canvas>
-    </div>
   </div>
 
   <!-- Overview -->
@@ -88,4 +76,101 @@
         </tbody>
       </table>
     </div>
-  </d
+  </div>
+
+  <footer>&copy; 2025 Cacao Drying Monitoring • Powered by ThingSpeak</footer>
+</div>
+
+<script>
+const channelID = 2770965;
+const readAPI = "LJ902FFDJSJOBZYJ";
+
+async function fetchLiveData() {
+  const d = await (await fetch(`https://api.thingspeak.com/channels/${channelID}/feeds/last.json?api_key=${readAPI}`)).json();
+  ["temperature1", "temperature2", "temperature3", "moisture"].forEach((id, i) => {
+    document.getElementById(id).textContent = `${d[`field${i + 1}`]}${i < 3 ? "°C" : "%"}`;
+  });
+}
+
+async function fetchWeather() {
+  try {
+    document.getElementById("weather").textContent = await (await fetch("https://wttr.in/Dapitan?format=%t")).text();
+  } catch {
+    document.getElementById("weather").textContent = "N/A";
+  }
+}
+
+function bucketBy3Hours(feeds, field) {
+  const buckets = {};
+  feeds.forEach(f => {
+    const date = new Date(f.created_at);
+    date.setHours(date.getHours() + 8); // Convert to Philippine Time (UTC+8)
+    const hour = date.getHours();
+    const bucket = Math.floor(hour / 3) * 3;
+    const key = `${bucket.toString().padStart(2, '0')}:00`;
+    const val = parseFloat(f[`field${field}`]);
+    if (!isNaN(val)) {
+      if (!buckets[key]) buckets[key] = [];
+      buckets[key].push(val);
+    }
+  });
+  return Object.keys(buckets).sort((a, b) => parseInt(a) - parseInt(b))
+    .map(t => ({ time: t, value: buckets[t].reduce((a, b) => a + b) / buckets[t].length }));
+}
+
+async function buildSummaryTableForToday() {
+  const times = ["09:00", "12:00", "15:00", "18:00"];
+  const labels = ["Temperature 1", "Temperature 2", "Temperature 3", "Moisture Level"];
+  const colors = ["#ff6b6b", "#f59f00", "#845ef7", "#51cf66"];
+  const body = document.getElementById("summary-body");
+  body.innerHTML = "";
+
+  for (let field = 1; field <= 4; field++) {
+    const now = new Date();
+    const startISO = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0).toISOString();
+    const endISO = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59).toISOString();
+    const url = `https://api.thingspeak.com/channels/${channelID}/fields/${field}.json?api_key=${readAPI}&start=${startISO}&end=${endISO}`;
+    const json = await (await fetch(url)).json();
+    const buckets = bucketBy3Hours(json.feeds, field);
+
+    const row = document.createElement("tr");
+    row.innerHTML = `<td style="padding:8px;">${labels[field - 1]}</td>`;
+
+    times.forEach(time => {
+      const bucket = buckets.find(b => b.time.startsWith(time));
+      row.innerHTML += `<td style="padding:8px;color:${colors[field - 1]}">${bucket ? bucket.value.toFixed(1) : "--"}</td>`;
+    });
+
+    body.appendChild(row);
+  }
+}
+
+async function loadFiveDaySummary() {
+  const body = document.getElementById('summary-body');
+  body.innerHTML = "<tr><td colspan='5' style='padding:10px;'>Loading summary data…</td></tr>";
+  await buildSummaryTableForToday();
+}
+
+// Auto-refresh summary table every 5 minutes if Data Summary is visible
+setInterval(() => {
+  const isVisible = location.hash === "#data-summary";
+  if (isVisible) loadFiveDaySummary();
+}, 300000); // 300000 ms = 5 minutes
+
+fetchLiveData();
+fetchWeather();
+setInterval(() => {
+  fetchLiveData();
+  fetchWeather();
+}, 20000);
+
+document.getElementById('summary-link').addEventListener('click', loadFiveDaySummary);
+document.getElementById('logout-btn').addEventListener('click', e => {
+  e.preventDefault();
+  sessionStorage.clear();
+  localStorage.clear();
+  window.location.href = 'login.html';
+});
+</script>
+</body>
+</html>
