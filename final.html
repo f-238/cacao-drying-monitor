@@ -49,6 +49,18 @@
         <div class="sensor-card"><h3>Weather</h3><p id="weather">--</p></div>
       </div>
     </div>
+
+    <div class="section">
+      <h3>🌡️ Temperature Trends</h3>
+      <canvas id="tempChart1"></canvas>
+      <canvas id="tempChart2"></canvas>
+      <canvas id="tempChart3"></canvas>
+    </div>
+
+    <div class="section">
+      <h3>💧 Moisture Level Trends</h3>
+      <canvas id="moistureChart"></canvas>
+    </div>
   </div>
 
   <!-- Overview -->
@@ -81,6 +93,7 @@
   <footer>&copy; 2025 Cacao Drying Monitoring • Powered by ThingSpeak</footer>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 const channelID = 2770965;
 const readAPI = "LJ902FFDJSJOBZYJ";
@@ -151,18 +164,42 @@ async function loadFiveDaySummary() {
   await buildSummaryTableForToday();
 }
 
-// Auto-refresh summary table every 5 minutes if Data Summary is visible
-setInterval(() => {
-  const isVisible = location.hash === "#data-summary";
-  if (isVisible) loadFiveDaySummary();
-}, 300000); // 300000 ms = 5 minutes
+function drawChart(f, id, label, c) {
+  fetch(`https://api.thingspeak.com/channels/${channelID}/fields/${f}.json?api_key=${readAPI}&results=100`)
+    .then(res => res.json())
+    .then(j => {
+      const l = j.feeds.map(x => new Date(x.created_at).toLocaleString());
+      const d = j.feeds.map(x => parseFloat(x[`field${f}`]));
+      new Chart(document.getElementById(id), {
+        type: 'line',
+        data: {
+          labels: l,
+          datasets: [{ label, data: d, borderColor: c, fill: false, tension: .1 }]
+        },
+        options: {
+          responsive: true,
+          scales: { x: { ticks: { maxTicksLimit: 10 } }, y: { beginAtZero: false } }
+        }
+      });
+    });
+}
 
 fetchLiveData();
 fetchWeather();
+drawChart(1, 'tempChart1', 'Temp1 °C', '#ff6b6b');
+drawChart(2, 'tempChart2', 'Temp2 °C', '#f59f00');
+drawChart(3, 'tempChart3', 'Temp3 °C', '#845ef7');
+drawChart(4, 'moistureChart', 'Moisture %', '#51cf66');
+
 setInterval(() => {
   fetchLiveData();
   fetchWeather();
 }, 20000);
+
+// Auto-refresh summary table every 5 minutes if visible
+setInterval(() => {
+  if (location.hash === "#data-summary") loadFiveDaySummary();
+}, 300000); // 5 minutes
 
 document.getElementById('summary-link').addEventListener('click', loadFiveDaySummary);
 document.getElementById('logout-btn').addEventListener('click', e => {
