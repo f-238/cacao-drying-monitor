@@ -95,78 +95,98 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-const channelID = 2770965;
-const readAPI = "LJ902FFDJSJOBZYJ";
+/* ------------------ CONFIG ------------------ */
+const channelID = 2770965;                   // ThingSpeak Channel ID
+const readAPI   = "LJ902FFDJSJOBZYJ";        // ThingSpeak Read API Key
 
+/* --------------- LIVE DATA ------------------ */
 async function fetchLiveData() {
-  const d = await (await fetch(`https://api.thingspeak.com/channels/${channelID}/feeds/last.json?api_key=${readAPI}`)).json();
-  ["temperature1", "temperature2", "temperature3", "moisture"].forEach((id, i) => {
-    document.getElementById(id).textContent = `${d[`field${i + 1}`]}${i < 3 ? "°C" : "%"}`;
+  const d = await (await fetch(
+      `https://api.thingspeak.com/channels/${channelID}/feeds/last.json?api_key=${readAPI}`
+    )).json();
+
+  ["temperature1","temperature2","temperature3","moisture"].forEach((id,i)=>{
+    document.getElementById(id).textContent =
+      `${d[`field${i+1}`]}${i<3 ? "°C" : "%"}`;
   });
 }
 
+/* --------- LOCAL WEATHER (Nasipit Talamban Cebu City) ---------- */
 async function fetchWeather() {
   try {
-    document.getElementById("weather").textContent = await (await fetch("https://wttr.in/Dapitan?format=%t")).text();
+    const loc  = "Nasipit+Talamban+Cebu+City";
+    const resp = await fetch(`https://wttr.in/${loc}?format=%t`);
+    document.getElementById("weather").textContent = await resp.text();
   } catch {
     document.getElementById("weather").textContent = "N/A";
   }
 }
 
+/* ------------ UTILS FOR SUMMARY TABLE -------------- */
 function bucketBy3Hours(feeds, field) {
   const buckets = {};
   feeds.forEach(f => {
     const date = new Date(f.created_at);
-    date.setHours(date.getHours() + 8); // Convert UTC to PH Time (UTC+8)
-    const hour = date.getHours();
-    const bucket = Math.floor(hour / 3) * 3;
-    const key = `${bucket.toString().padStart(2, '0')}:00`;
-    const val = parseFloat(f[`field${field}`]);
+    date.setHours(date.getHours() + 8);          // convert UTC → PHT
+    const bucket = Math.floor(date.getHours() / 3) * 3;
+    const key    = `${bucket.toString().padStart(2,'0')}:00`;
+    const val    = parseFloat(f[`field${field}`]);
+
     if (!isNaN(val)) {
       if (!buckets[key]) buckets[key] = [];
       buckets[key].push(val);
     }
   });
-  return Object.keys(buckets).sort((a, b) => parseInt(a) - parseInt(b))
-    .map(t => ({ time: t, value: buckets[t].reduce((a, b) => a + b) / buckets[t].length }));
+
+  return Object.keys(buckets).sort((a,b)=>parseInt(a)-parseInt(b))
+               .map(t => ({
+                 time : t,
+                 value: buckets[t].reduce((a,b)=>a+b) / buckets[t].length
+               }));
 }
 
+/* ---------------- SUMMARY TABLE ------------------- */
 async function buildSummaryTableForToday() {
-  const times = ["09:00", "12:00", "15:00", "18:00"];
-  const labels = ["Temperature 1", "Temperature 2", "Temperature 3", "Moisture Level"];
-  const colors = ["#ff6b6b", "#f59f00", "#845ef7", "#51cf66"];
-  const body = document.getElementById("summary-body");
+  const times   = ["09:00","12:00","15:00","18:00"];
+  const labels  = ["Temperature 1","Temperature 2","Temperature 3","Moisture Level"];
+  const colors  = ["#ff6b6b","#f59f00","#845ef7","#51cf66"];
+  const body    = document.getElementById("summary-body");
   body.innerHTML = "";
 
   for (let field = 1; field <= 4; field++) {
-    const now = new Date();
-    const startISO = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0).toISOString();
-    const endISO = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59).toISOString();
-    const url = `https://api.thingspeak.com/channels/${channelID}/fields/${field}.json?api_key=${readAPI}&start=${startISO}&end=${endISO}`;
-    const json = await (await fetch(url)).json();
-    const buckets = bucketBy3Hours(json.feeds, field);
+    const now      = new Date();
+    const startISO = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0,0,0).toISOString();
+    const endISO   = new Date(now.getFullYear(), now.getMonth(), now.getDate(),23,59,59).toISOString();
+    const url      = `https://api.thingspeak.com/channels/${channelID}/fields/${field}.json?api_key=${readAPI}&start=${startISO}&end=${endISO}`;
+
+    const json     = await (await fetch(url)).json();
+    const buckets  = bucketBy3Hours(json.feeds, field);
 
     const row = document.createElement("tr");
-    row.innerHTML = `<td style="padding:8px;">${labels[field - 1]}</td>`;
+    row.innerHTML = `<td style="padding:8px;">${labels[field-1]}</td>`;
 
     times.forEach(time => {
-      const bucket = buckets.find(b => b.time.startsWith(time));
-      row.innerHTML += `<td style="padding:8px;color:${colors[field - 1]}">${bucket ? bucket.value.toFixed(1) : "--"}</td>`;
+      const bucket = buckets.find(b=>b.time.startsWith(time));
+      row.innerHTML += `<td style="padding:8px;color:${colors[field-1]}">
+                          ${bucket ? bucket.value.toFixed(1) : "--"}
+                        </td>`;
     });
 
     body.appendChild(row);
   }
 }
 
-function drawChart(f, id, label, c) {
+/* --------------- CHART DRAWING ------------------- */
+function drawChart(f, id, label, color) {
   fetch(`https://api.thingspeak.com/channels/${channelID}/fields/${f}.json?api_key=${readAPI}&results=100`)
     .then(res => res.json())
     .then(j => {
-      const l = j.feeds.map(x => new Date(x.created_at).toLocaleString());
-      const d = j.feeds.map(x => parseFloat(x[`field${f}`]));
+      const labels = j.feeds.map(x => new Date(x.created_at).toLocaleString());
+      const data   = j.feeds.map(x => parseFloat(x[`field${f}`]));
+
       new Chart(document.getElementById(id), {
-        type: 'line',
-        data: { labels: l, datasets: [{ label, data: d, borderColor: c, fill: false, tension: .1 }] },
+        type: "line",
+        data: { labels, datasets: [{ label, data, borderColor: color, fill: false, tension: .1 }] },
         options: {
           responsive: true,
           scales: {
@@ -178,38 +198,39 @@ function drawChart(f, id, label, c) {
     });
 }
 
+/* --------------- INITIALIZE ---------------------- */
 fetchLiveData();
 fetchWeather();
-drawChart(1, 'tempChart1', 'Temp1 °C', '#ff6b6b');
-drawChart(2, 'tempChart2', 'Temp2 °C', '#f59f00');
-drawChart(3, 'tempChart3', 'Temp3 °C', '#845ef7');
-drawChart(4, 'moistureChart', 'Moisture %', '#51cf66');
+drawChart(1,"tempChart1","Temp1 °C","#ff6b6b");
+drawChart(2,"tempChart2","Temp2 °C","#f59f00");
+drawChart(3,"tempChart3","Temp3 °C","#845ef7");
+drawChart(4,"moistureChart","Moisture %","#51cf66");
 
-setInterval(() => {
+setInterval(()=>{
   fetchLiveData();
   fetchWeather();
-}, 20000);
+}, 20000);            // refresh every 20 s
 
-// Load summary table
-document.getElementById('summary-link').addEventListener('click', loadFiveDaySummary);
-async function loadFiveDaySummary() {
-  const body = document.getElementById('summary-body');
+/* --- Data‑Summary link handler --- */
+document.getElementById("summary-link").addEventListener("click", loadTodaySummary);
+
+async function loadTodaySummary() {
+  const body = document.getElementById("summary-body");
   body.innerHTML = "<tr><td colspan='5' style='padding:10px;'>Loading summary data…</td></tr>";
   await buildSummaryTableForToday();
 }
 
-// Auto-refresh summary table every 5 minutes when visible
-setInterval(() => {
-  if (location.hash === "#data-summary") {
-    loadFiveDaySummary();
-  }
+/* Auto‑refresh summary table every 5 min while visible */
+setInterval(()=>{
+  if (location.hash === "#data-summary") loadTodaySummary();
 }, 300000);
 
-document.getElementById('logout-btn').addEventListener('click', e => {
+/* ---------------- LOGOUT ------------------ */
+document.getElementById("logout-btn").addEventListener("click", e=>{
   e.preventDefault();
   sessionStorage.clear();
   localStorage.clear();
-  window.location.href = 'login.html';
+  window.location.href = "login.html";
 });
 </script>
 </body>
