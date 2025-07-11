@@ -80,10 +80,7 @@
     }
     .sensor-card h3 { margin: .4rem 0; font-size: 1rem; }
     .sensor-card p  { font-size: 1.5rem; font-weight: 700; }
-    canvas {
-      max-width: 100%;
-      height: auto;
-    }
+    canvas { max-width: 100%; height: auto; }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -153,16 +150,33 @@
       <h3>📊 Daily Summary — <span id="summary-date">–</span></h3>
       <table>
         <thead><tr><th>Sensor</th><th>Min</th><th>Max</th><th>Avg</th></tr></thead>
-        <tbody id="summary-table"><tr><td colspan="4">Load summary…</td></tr></tbody>
+        <tbody id="summary-table"><tr><td colspan="4">Loading summary…</td></tr></tbody>
       </table>
     </div>
     <footer>&copy; 2025 Cacao Drying Monitoring • Powered by ThingSpeak</footer>
   </div>
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    if (!localStorage.getItem("loggedIn")) {
+    // Redirect to login if not logged in
+    if (localStorage.getItem("loggedIn") !== "true") {
       window.location.href = "login.html";
     }
+
+    // Auto-logout after 30 minutes of inactivity
+    let logoutTimer;
+    function resetTimer() {
+      clearTimeout(logoutTimer);
+      logoutTimer = setTimeout(() => {
+        alert("Session expired due to inactivity.");
+        localStorage.clear();
+        window.location.href = "login.html";
+      }, 1800000); // 30 minutes
+    }
+    window.onload = resetTimer;
+    document.onmousemove = resetTimer;
+    document.onkeypress = resetTimer;
+    document.onclick = resetTimer;
 
     const channelID = 2770965;
     const readAPI   = "LJ902FFDJSJOBZYJ";
@@ -175,6 +189,7 @@
       document.getElementById("temperature3").textContent = `${d.field3}°C`;
       document.getElementById("moisture").textContent    = `${d.field4}%`;
       document.getElementById("dryingStatus").textContent = d.field9;
+
       if (d.field9 === "DONE") {
         alert("✅ Drying process completed!");
       }
@@ -190,14 +205,29 @@
     }
 
     async function drawChart(field, canvasID, label, color) {
-      const url   = `https://api.thingspeak.com/channels/${channelID}/fields/${field}.json?api_key=${readAPI}&results=100`;
-      const j     = await (await fetch(url)).json();
-      const labels= j.feeds.map(f => new Date(f.created_at).toLocaleString());
-      const data  = j.feeds.map(f => parseFloat(f[`field${field}`]));
+      const url = `https://api.thingspeak.com/channels/${channelID}/fields/${field}.json?api_key=${readAPI}&results=100`;
+      const j = await (await fetch(url)).json();
+      const labels = j.feeds.map(f => new Date(f.created_at).toLocaleString());
+      const data = j.feeds.map(f => parseFloat(f[`field${field}`]));
       new Chart(document.getElementById(canvasID), {
         type: 'line',
-        data: { labels, datasets: [{ label, data, borderColor: color, fill: false, tension: 0.1 }] },
-        options: { responsive: true, scales: { x: { ticks: { maxTicksLimit: 10 } }, y: { beginAtZero: false } } }
+        data: {
+          labels,
+          datasets: [{
+            label,
+            data,
+            borderColor: color,
+            fill: false,
+            tension: 0.1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: { ticks: { maxTicksLimit: 10 } },
+            y: { beginAtZero: false }
+          }
+        }
       });
     }
 
@@ -206,22 +236,22 @@
         { name: "Temperature 1 (°C)", field: 1 },
         { name: "Temperature 2 (°C)", field: 2 },
         { name: "Temperature 3 (°C)", field: 3 },
-        { name: "Moisture (%)",      field: 4 }
+        { name: "Moisture (%)", field: 4 }
       ];
-      const end   = new Date();
+      const end = new Date();
       const start = new Date(end.getTime() - 24 * 60 * 60 * 1000);
       document.getElementById("summary-date").textContent = end.toLocaleDateString();
 
       const tbody = document.getElementById("summary-table");
       tbody.innerHTML = "";
       for (const s of sensors) {
-        const url  = `https://api.thingspeak.com/channels/${channelID}/fields/${s.field}.json?api_key=${readAPI}&start=${start.toISOString()}&end=${end.toISOString()}`;
-        const jj   = await (await fetch(url)).json();
+        const url = `https://api.thingspeak.com/channels/${channelID}/fields/${s.field}.json?api_key=${readAPI}&start=${start.toISOString()}&end=${end.toISOString()}`;
+        const jj = await (await fetch(url)).json();
         const vals = jj.feeds.map(f => parseFloat(f[`field${s.field}`])).filter(v => !isNaN(v));
-        const min  = vals.length ? Math.min(...vals).toFixed(2) : "–";
-        const max  = vals.length ? Math.max(...vals).toFixed(2) : "–";
-        const avg  = vals.length ? (vals.reduce((a,b)=>a+b,0) / vals.length).toFixed(2) : "–";
-        const tr   = document.createElement("tr");
+        const min = vals.length ? Math.min(...vals).toFixed(2) : "–";
+        const max = vals.length ? Math.max(...vals).toFixed(2) : "–";
+        const avg = vals.length ? (vals.reduce((a,b)=>a+b,0) / vals.length).toFixed(2) : "–";
+        const tr = document.createElement("tr");
         tr.innerHTML = `<td>${s.name}</td><td>${min}</td><td>${max}</td><td>${avg}</td>`;
         tbody.appendChild(tr);
       }
@@ -238,11 +268,7 @@
     setInterval(() => {
       fetchLiveData();
       fetchWeather();
-      drawChart(1, "tempChart1", "Temperature 1 (°C)", "#ff6b6b");
-      drawChart(2, "tempChart2", "Temperature 2 (°C)", "#f59f00");
-      drawChart(3, "tempChart3", "Temperature 3 (°C)", "#845ef7");
-      drawChart(4, "moistureChart", "Moisture (%)", "#51cf66");
-    }, 300000);
+    }, 30000);
 
     document.getElementById("summary-link").addEventListener("click", loadDailySummary);
     document.getElementById("logout-btn").addEventListener("click", e => {
@@ -253,4 +279,3 @@
   </script>
 </body>
 </html>
-
