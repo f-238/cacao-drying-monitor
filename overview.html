@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thesis Overview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+
+    body {
+      display: flex;
+      height: 100vh;
+      background-color: #f8fafc;
+    }
+
+    .sidebar {
+      width: 240px;
+      background: #2f9e44;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+    }
+
+    .sidebar h2 { text-align: center; margin-bottom: 2rem; }
+    .nav-link { color: white; text-decoration: none; padding: 0.8rem 1rem; border-radius: 8px; margin-bottom: 0.5rem; }
+    .nav-link:hover, .active { background: #37b24d; }
+
+    .main { flex: 1; padding: 1.5rem; overflow-y: auto; }
+    header { text-align: center; margin-bottom: 1.5rem; }
+    header h1 { font-size: 1.3rem; color: #2b2b2b; }
+
+    .content { background: #fff; border-radius: 10px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .content h2 { margin-bottom: 1rem; color: #2f9e44; }
+
+    @media (max-width: 768px) {
+      body { flex-direction: column; }
+      .sidebar { width: 100%; flex-direction: row; justify-content: space-around; }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>CacaoTech</h2>
+    <a href="dashboard.html" class="nav-link">🏠 Dashboard</a>
+    <a href="overview.html" class="nav-link active">📖 Overview</a>
+    <a href="data-summary.html" class="nav-link">📊 Data Summary</a>
+  </div>
+
+  <div class="main">
+    <header>
+      <h1>Development and Implementation of a Wireless Monitoring System for Theobroma Cacao Drying Process</h1>
+    </header>
+
+    <div class="content">
+      <h2>Thesis Overview</h2>
+      <p>
+        This study focuses on developing and implementing a wireless monitoring system for Theobroma cacao drying process using LoRa communication. The system tracks temperature, humidity, and moisture content in real time to optimize drying efficiency and preserve cacao bean quality.
+      </p>
+    </div>
+  </div>
+</body>
+</html>
