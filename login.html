@@ -128,7 +128,7 @@
 
   <script>
     if (localStorage.getItem("loggedIn") === "true") {
-      window.location.href = "cacao.html";
+      window.location.href = "monitor.html";
     }
 
     function login() {
@@ -138,7 +138,7 @@
 
       if (user === "admin" && pass === "cacao123") {
         localStorage.setItem("loggedIn", "true");
-        window.location.href = "cacao.html";
+        window.location.href = "monitor.html";
       } else {
         error.textContent = "Invalid credentials. Please try again.";
       }
@@ -146,4 +146,5 @@
   </script>
 </body>
 </html>
+
 
