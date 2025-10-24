@@ -14,8 +14,6 @@
       color: #000;
       display: flex;
     }
-
-    /* Sidebar */
     .sidebar {
       width: 200px;
       background: #f5f5f5;
@@ -28,7 +26,6 @@
       position: fixed;
       border-right: 1px solid #ccc;
     }
-
     .sidebar a {
       color: #333;
       text-decoration: none;
@@ -36,139 +33,81 @@
       width: 100%;
       display: flex;
       justify-content: center;
-      align-items: center;
       gap: 8px;
+      transition: background .2s;
       font-size: 1rem;
-      border-left: 4px solid transparent;
-      transition: background 0.2s, border-color 0.2s;
     }
-
-    .sidebar a:hover {
-      background: #e9ecef;
+    .sidebar a:hover, .sidebar a.active {
+      background: #ddd;
     }
-
-    .sidebar a.active {
-      background: #d0ebff;
-      border-left: 4px solid #228be6;
-      font-weight: 600;
-      color: #000;
-    }
-
     .sidebar a#logout-btn {
       color: #d00000;
       margin-top: auto;
       font-weight: bold;
-      border-left: none;
     }
-
-    /* Main Content */
     .main {
       margin-left: 200px;
+      padding: 2rem;
       flex: 1;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
+      transition: opacity 0.3s ease-in-out;
     }
-
     header {
       background: radial-gradient(circle at center, #fff, #a2d2ff, #b5ead7);
       color: #000;
       text-align: center;
       padding: 1.5rem;
-      border-radius: 0 0 1rem 1rem;
-      font-size: 1.4rem;
+      border-radius: 1rem;
+      font-size: 1.5rem;
       font-weight: 600;
-      position: sticky;
-      top: 0;
-      z-index: 10;
     }
-
-    iframe {
-      border: none;
-      flex: 1;
-      width: 100%;
-      height: 100%;
-      transition: opacity 0.3s ease-in-out;
+    #content {
+      margin-top: 1.5rem;
+      background: #f9f9f9;
+      border-radius: 12px;
+      padding: 1.5rem;
+      min-height: 70vh;
+      box-shadow: 0 2px 12px rgba(0,0,0,.1);
     }
-
-    iframe.fade-out {
-      opacity: 0;
-    }
-
     footer {
       text-align: center;
-      padding: 1rem;
-      font-size: 0.9rem;
+      padding: 2rem;
+      font-size: .9rem;
       color: #666;
-      background: #fafafa;
-      border-top: 1px solid #ddd;
     }
-
     @media (max-width: 600px) {
-      .sidebar {
-        display: none;
-      }
-      .main {
-        margin-left: 0;
-      }
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 1rem; }
     }
   </style>
 </head>
 <body>
-  <!-- Sidebar -->
   <div class="sidebar">
     <a href="#" data-page="dashboard.html" class="active"><i class="fas fa-chart-line"></i> Dashboard</a>
     <a href="#" data-page="overview.html"><i class="fas fa-file-alt"></i> Overview</a>
-    <a href="#" data-page="data-summary.html"><i class="fas fa-table"></i> Data Summary</a>
+    <a href="#" data-page="data-summary.html"><i class="fas fa-table"></i> Data&nbsp;Summary</a>
     <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
   </div>
 
-  <!-- Main Section -->
   <div class="main">
     <header>
       Development and Implementation of a Wireless Monitoring System for Theobroma Cacao Drying Process
     </header>
 
-    <iframe id="content-frame" src="dashboard.html"></iframe>
+    <div id="content">
+      <!-- Dynamic content will load here -->
+      <p style="text-align:center;">Loading content...</p>
+    </div>
 
     <footer>&copy; 2025 Cacao Drying Monitoring • Powered by ThingSpeak</footer>
   </div>
 
   <script>
-    // Redirect if not logged in
+    // Redirect to login if not logged in
     if (localStorage.getItem("loggedIn") !== "true") {
       window.location.href = "login.html";
     }
 
-    const iframe = document.getElementById("content-frame");
-    const links = document.querySelectorAll(".sidebar a[data-page]");
-
-    links.forEach(link => {
-      link.addEventListener("click", e => {
-        e.preventDefault();
-        const page = link.getAttribute("data-page");
-
-        // Add fade transition effect
-        iframe.classList.add("fade-out");
-        setTimeout(() => {
-          iframe.src = page;
-          iframe.classList.remove("fade-out");
-        }, 200);
-
-        // Update active state
-        links.forEach(l => l.classList.remove("active"));
-        link.classList.add("active");
-      });
-    });
-
-    // Logout button
-    document.getElementById("logout-btn").addEventListener("click", e => {
-      e.preventDefault();
-      localStorage.clear();
-      window.location.href = "login.html";
-    });
-
-    // Auto logout after 30 minutes of inactivity
+    // Auto-logout after 30 minutes of inactivity
     let logoutTimer;
     function resetTimer() {
       clearTimeout(logoutTimer);
@@ -176,13 +115,51 @@
         alert("Session expired due to inactivity.");
         localStorage.clear();
         window.location.href = "login.html";
-      }, 1800000); // 30 mins
+      }, 1800000); // 30 minutes
     }
-
     window.onload = resetTimer;
     document.onmousemove = resetTimer;
     document.onkeypress = resetTimer;
     document.onclick = resetTimer;
+
+    // Load content dynamically
+    async function loadPage(page) {
+      const content = document.getElementById("content");
+      content.style.opacity = 0.5;
+      content.innerHTML = "<p style='text-align:center;'>Loading...</p>";
+
+      try {
+        const res = await fetch(page);
+        if (!res.ok) throw new Error("Failed to load page");
+        const html = await res.text();
+        content.innerHTML = html;
+      } catch (err) {
+        content.innerHTML = `<p style='color:red;text-align:center;'>Error loading ${page}</p>`;
+      }
+      content.style.opacity = 1;
+    }
+
+    // Sidebar navigation
+    const links = document.querySelectorAll(".sidebar a[data-page]");
+    links.forEach(link => {
+      link.addEventListener("click", e => {
+        e.preventDefault();
+        links.forEach(l => l.classList.remove("active"));
+        link.classList.add("active");
+        const page = link.getAttribute("data-page");
+        loadPage(page);
+      });
+    });
+
+    // Load Dashboard by default
+    loadPage("dashboard.html");
+
+    // Logout button
+    document.getElementById("logout-btn").addEventListener("click", e => {
+      e.preventDefault();
+      localStorage.clear();
+      window.location.href = "login.html";
+    });
   </script>
 </body>
 </html>
