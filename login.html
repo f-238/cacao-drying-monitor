@@ -18,28 +18,32 @@
       background: #f7f7f7;
     }
 
+    /* Left side with full background image */
     .left {
       flex: 1;
-      background: linear-gradient(to top right, #8ecae6, #b5ead7);
-      color: white;
+      background: url('https://raw.githubusercontent.com/f-238/cacao-drying-monitor/main/cacao.png') center/cover no-repeat;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-direction: column;
+      color: white;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.4);
       padding: 2rem;
     }
 
     .left h1 {
       font-size: 2rem;
-      margin: 1rem 0 0.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
     }
 
     .left p {
       font-size: 1rem;
-      max-width: 300px;
+      max-width: 320px;
       text-align: center;
     }
 
+    /* Right side (login form) */
     .right {
       flex: 1;
       display: flex;
@@ -97,14 +101,19 @@
     }
 
     @media (max-width: 768px) {
-      .left { display: none; }
-      .right { flex: 1; }
+      .left {
+        display: none;
+      }
+      .right {
+        flex: 1;
+      }
     }
   </style>
 </head>
 <body>
   <div class="left">
-    <h1> Cacao Drying Monitoring </h1>
+    <h1>Cacao Drying Monitoring</h1>
+    <p>Smart real-time monitoring for cacao drying efficiency.</p>
   </div>
 
   <div class="right">
@@ -137,8 +146,3 @@
   </script>
 </body>
 </html>
-
-
-
-
-
