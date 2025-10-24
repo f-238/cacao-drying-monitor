@@ -13,19 +13,21 @@
     }
 
     body {
+      font-family: 'Inter', sans-serif;
       display: flex;
       height: 100vh;
-      font-family: 'Inter', sans-serif;
-      background-color: #f9fafb;
+      background-color: #f5f7fa;
     }
 
-    /* ✅ Left section with full background image */
+    /* 🌅 Left side background image */
     .left {
       flex: 1;
-      background: url('https://raw.githubusercontent.com/f-238/cacao-drying-monitor/main/cacao.png') center center / cover no-repeat;
+      background: 
+        linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
+        url('https://raw.githubusercontent.com/f-238/cacao-drying-monitor/main/cacao.png') center center / cover no-repeat;
     }
 
-    /* ✅ Right section for login form */
+    /* 🌞 Right side login section */
     .right {
       flex: 1;
       display: flex;
@@ -36,54 +38,124 @@
     }
 
     .login-box {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 2.5rem;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
       width: 100%;
-      max-width: 360px;
-      padding: 2rem;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+      max-width: 380px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .login-box:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
     }
 
     .login-box h2 {
       text-align: center;
-      margin-bottom: 1.5rem;
       color: #333;
       font-weight: 600;
+      margin-bottom: 1.5rem;
     }
 
-    input[type="text"], input[type="password"] {
+    input[type="text"],
+    input[type="password"],
+    input[type="email"] {
       width: 100%;
-      padding: 0.75rem;
-      margin-bottom: 1rem;
+      padding: 0.9rem;
+      margin-bottom: 1.2rem;
       border: 1px solid #ccc;
       border-radius: 8px;
       font-size: 1rem;
+      transition: border 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #51cf66;
+      box-shadow: 0 0 4px rgba(81, 207, 102, 0.4);
     }
 
     button {
       width: 100%;
-      padding: 0.75rem;
-      background: #51cf66;
+      padding: 0.9rem;
+      background: linear-gradient(90deg, #69db7c, #40c057);
       border: none;
       border-radius: 8px;
-      font-size: 1rem;
       color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
       cursor: pointer;
-      transition: background 0.3s ease;
+      transition: background 0.3s ease, transform 0.2s ease;
     }
 
     button:hover {
-      background: #40c057;
+      background: linear-gradient(90deg, #40c057, #2f9e44);
+      transform: scale(1.02);
+    }
+
+    .register-link {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.95rem;
+    }
+
+    .register-link a {
+      color: #40c057;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .register-link a:hover {
+      text-decoration: underline;
     }
 
     .error {
-      color: red;
-      margin-top: .5rem;
+      color: #e03131;
+      margin-top: .6rem;
       font-size: .9rem;
       text-align: center;
     }
 
-    /* 📱 Responsive for smaller screens */
+    /* 🔒 Register modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      position: relative;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 1.2rem;
+      color: #555;
+      cursor: pointer;
+    }
+
+    .close-btn:hover {
+      color: #000;
+    }
+
+    /* 📱 Responsive */
     @media (max-width: 900px) {
       body {
         flex-direction: column;
@@ -93,25 +165,14 @@
         width: 100%;
       }
       .right {
-        flex: unset;
         height: auto;
         padding: 1.5rem;
-      }
-      .login-box {
-        box-shadow: none;
-        padding: 1.5rem;
-      }
-    }
-
-    @media (max-width: 480px) {
-      input[type="text"], input[type="password"], button {
-        font-size: 0.9rem;
       }
     }
   </style>
 </head>
 <body>
-  <!-- Left: Full background image -->
+  <!-- Left: Background image -->
   <div class="left"></div>
 
   <!-- Right: Login form -->
@@ -122,26 +183,88 @@
       <input type="password" id="password" placeholder="Password" required />
       <button onclick="login()">Login</button>
       <div class="error" id="errorMsg"></div>
+      <div class="register-link">
+        Don’t have an account? <a href="#" onclick="openRegister()">Register here</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Registration Modal -->
+  <div class="modal" id="registerModal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeRegister()">&times;</span>
+      <h2 style="text-align:center;">Register Account</h2>
+      <input type="text" id="regUsername" placeholder="Create Username" required />
+      <input type="email" id="regEmail" placeholder="Email" required />
+      <input type="password" id="regPassword" placeholder="Create Password" required />
+      <button onclick="register()">Register</button>
+      <div class="error" id="registerMsg"></div>
     </div>
   </div>
 
   <script>
+    // Redirect if already logged in
     if (localStorage.getItem("loggedIn") === "true") {
       window.location.href = "monitor.html";
     }
 
+    // Login logic
     function login() {
       const user = document.getElementById('username').value;
       const pass = document.getElementById('password').value;
       const error = document.getElementById('errorMsg');
 
-      if (user === "admin" && pass === "cacao123") {
+      // Retrieve saved user data from localStorage
+      const savedUser = localStorage.getItem("user");
+      const savedPass = localStorage.getItem("pass");
+
+      if ((user === "admin" && pass === "cacao123") || (user === savedUser && pass === savedPass)) {
         localStorage.setItem("loggedIn", "true");
         window.location.href = "monitor.html";
       } else {
         error.textContent = "Invalid credentials. Please try again.";
       }
     }
+
+    // Register modal control
+    function openRegister() {
+      document.getElementById("registerModal").style.display = "flex";
+    }
+
+    function closeRegister() {
+      document.getElementById("registerModal").style.display = "none";
+    }
+
+    // Register new user
+    function register() {
+      const username = document.getElementById("regUsername").value;
+      const email = document.getElementById("regEmail").value;
+      const password = document.getElementById("regPassword").value;
+      const msg = document.getElementById("registerMsg");
+
+      if (!username || !email || !password) {
+        msg.textContent = "All fields are required.";
+        return;
+      }
+
+      localStorage.setItem("user", username);
+      localStorage.setItem("email", email);
+      localStorage.setItem("pass", password);
+
+      msg.style.color = "#40c057";
+      msg.textContent = "Registration successful! You can now log in.";
+      setTimeout(() => {
+        closeRegister();
+      }, 1500);
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      const modal = document.getElementById("registerModal");
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    };
   </script>
 </body>
 </html>
