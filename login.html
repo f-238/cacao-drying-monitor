@@ -18,29 +18,42 @@
       background: #f7f7f7;
     }
 
-    /* Left side with full background image */
+    /* ✅ Left side with full image background */
     .left {
       flex: 1;
+      position: relative;
       background: url('https://raw.githubusercontent.com/f-238/cacao-drying-monitor/main/cacao.png') center/cover no-repeat;
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-direction: column;
       color: white;
-      text-shadow: 0 2px 5px rgba(0,0,0,0.4);
+      text-align: center;
+    }
+
+    /* 🔲 Dark overlay for better text visibility */
+    .left::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+    }
+
+    .left-content {
+      position: relative;
+      z-index: 2;
       padding: 2rem;
     }
 
-    .left h1 {
+    .left-content h1 {
       font-size: 2rem;
-      font-weight: 600;
       margin-bottom: 0.5rem;
+      font-weight: 600;
     }
 
-    .left p {
+    .left-content p {
       font-size: 1rem;
       max-width: 320px;
-      text-align: center;
+      margin: 0 auto;
     }
 
     /* Right side (login form) */
@@ -100,6 +113,7 @@
       text-align: center;
     }
 
+    /* 📱 Responsive for mobile */
     @media (max-width: 768px) {
       .left {
         display: none;
@@ -112,8 +126,10 @@
 </head>
 <body>
   <div class="left">
-    <h1>Cacao Drying Monitoring</h1>
-    <p>Smart real-time monitoring for cacao drying efficiency.</p>
+    <div class="left-content">
+      <h1>Cacao Drying Monitoring</h1>
+      <p>Smart real-time monitoring for cacao drying efficiency.</p>
+    </div>
   </div>
 
   <div class="right">
@@ -146,5 +162,3 @@
   </script>
 </body>
 </html>
-
-
