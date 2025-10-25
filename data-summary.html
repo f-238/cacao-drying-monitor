@@ -1,291 +1,81 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Data Summary | CacaoTech Monitor</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --primary: #0077b6;
-      --light-bg: #f9f9f9;
-      --text-dark: #222;
-      --text-light: #555;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: "Inter", sans-serif;
-    }
-
-    body {
-      background-color: #fff;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* 🔹 Navbar */
-    header {
-      background: var(--primary);
-      color: white;
-      padding: 1rem 1.5rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: clamp(1.2rem, 2vw, 1.6rem);
-    }
-
-    nav a {
-      color: white;
-      text-decoration: none;
-      margin-left: 1rem;
-      font-weight: 600;
-      transition: opacity 0.2s;
-    }
-
-    nav a:hover {
-      opacity: 0.8;
-    }
-
-    main {
-      flex: 1;
-      padding: 1.5rem;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 1rem;
-      color: var(--primary);
-    }
-
-    .section {
-      background: #fff;
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.05);
-      margin-bottom: 1.5rem;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 1rem;
-    }
-
-    th, td {
-      padding: 0.75rem;
-      border: 1px solid #ddd;
-      text-align: center;
-      font-size: 0.95rem;
-    }
-
-    th {
-      background-color: var(--light-bg);
-    }
-
-    button {
-      padding: 0.6rem 1.2rem;
-      background: var(--primary);
-      border: none;
-      color: white;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: 0.2s ease;
-      display: block;
-      margin: 0.5rem auto;
-    }
-
-    button:hover {
-      opacity: 0.9;
-    }
-
-    input[type="date"] {
-      padding: 0.6rem;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      display: block;
-      margin: 0.5rem auto;
-      font-size: 1rem;
-    }
-
-    #dataDisplay {
-      text-align: center;
-      margin-top: 1rem;
-      font-size: 1rem;
-      color: var(--text-dark);
-    }
-
-    footer {
-      text-align: center;
-      font-size: 0.9rem;
-      color: var(--text-light);
-      padding: 1rem;
-    }
-
-    @media (max-width: 768px) {
-      main {
-        padding: 1rem;
-      }
-      table {
-        font-size: 0.85rem;
-      }
-    }
-  </style>
-</head>
-
-<body>
-  <header>
-    <h1>CacaoTech Data Summary</h1>
-    <nav>
-      <a href="dashboard.html">Dashboard</a>
-      <a href="overview.html">Overview</a>
-      <a href="#" id="logoutBtn">Logout</a>
-    </nav>
-  </header>
-
-  <main>
-    <div class="section">
-      <h2>Daily Summary</h2>
-      <table id="summaryTable">
+<div style="padding:1rem;max-width:900px;margin:0 auto">
+  <div style="background:#fff;padding:1rem;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.06);margin-bottom:1rem">
+    <h2 style="color:#2f9e44;text-align:center;margin-bottom:1rem">Daily Summary</h2>
+    <div style="overflow:auto">
+      <table style="width:100%;border-collapse:collapse">
         <thead>
-          <tr>
-            <th>Date</th>
-            <th>Temp 1</th>
-            <th>Temp 2</th>
-            <th>Temp 3</th>
-            <th>Moisture</th>
-            <th>Status</th>
+          <tr style="background:#f1f3f5">
+            <th style="padding:.6rem;border:1px solid #eee">Date</th>
+            <th style="padding:.6rem;border:1px solid #eee">Temp 1</th>
+            <th style="padding:.6rem;border:1px solid #eee">Temp 2</th>
+            <th style="padding:.6rem;border:1px solid #eee">Temp 3</th>
+            <th style="padding:.6rem;border:1px solid #eee">Moisture</th>
+            <th style="padding:.6rem;border:1px solid #eee">Status</th>
           </tr>
         </thead>
         <tbody id="summaryBody">
-          <tr><td colspan="6">Loading data...</td></tr>
+          <tr><td style="padding:.6rem;text-align:center" colspan="6">No data yet</td></tr>
         </tbody>
       </table>
-      <button onclick="exportCSV()">Export CSV</button>
     </div>
-
-    <div class="section">
-      <h2>Historical Data Viewer</h2>
-      <input type="date" id="datePicker" />
-      <button onclick="viewData()">View Data</button>
-      <div id="dataDisplay"></div>
+    <div style="text-align:center;margin-top:1rem">
+      <button id="exportBtn" style="padding:.6rem 1rem;border-radius:8px;border:none;background:#37b24d;color:#fff;cursor:pointer">Export CSV</button>
     </div>
-  </main>
+  </div>
 
-  <footer>
-    <p>© 2025 CacaoTech | LoRa-Based Cacao Drying Monitoring System</p>
-  </footer>
+  <div style="background:#fff;padding:1rem;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.06)">
+    <h2 style="text-align:center;color:#2f9e44;margin-bottom:1rem">Historical Data Viewer</h2>
+    <div style="display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap">
+      <input id="datePicker" type="date" style="padding:.6rem;border-radius:8px;border:1px solid #ddd" />
+      <button onclick="viewData()" style="padding:.6rem 1rem;border-radius:8px;border:none;background:#37b24d;color:#fff;cursor:pointer">View Data</button>
+    </div>
+    <div id="dataDisplay" style="text-align:center;margin-top:1rem;color:#333"></div>
+  </div>
+</div>
 
-  <script>
-    // 🔹 Session check
-    const currentUser = localStorage.getItem("username");
-    if (!currentUser) {
-      window.location.href = "login.html";
-    }
+<script>
+  // For demo we will use a tiny in-browser dataset saved in localStorage as "cacao_history"
+  // In real deployment you can populate this from ThingSpeak exports or server APIs.
+  function getHist(){ try{return JSON.parse(localStorage.getItem('cacao_history')||'[]')}catch{return []} }
+  function setHist(d){ localStorage.setItem('cacao_history', JSON.stringify(d)) }
 
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      localStorage.removeItem("username");
-      window.location.href = "login.html";
-    });
+  // Seed sample if empty (so UI isn't blank)
+  if(!getHist().length){
+    const sample = [{date:'2025-10-24', t1:34, t2:33, t3:32, moisture:12, status:'Drying'}];
+    setHist(sample);
+  }
 
-    // 🔹 ThingSpeak API Setup
-    const channelID = 2770965;
-    const readAPI = "LJ902FFDJSJOBZYJ";
-    const summaryBody = document.getElementById("summaryBody");
+  function renderTable(){
+    const body = document.getElementById('summaryBody');
+    const d = getHist();
+    if(!d.length){ body.innerHTML = '<tr><td colspan="6" style="padding:.6rem;text-align:center">No data</td></tr>'; return;}
+    body.innerHTML = d.map(r=>`<tr>
+      <td style="padding:.6rem;text-align:center">${r.date}</td>
+      <td style="padding:.6rem;text-align:center">${r.t1}°C</td>
+      <td style="padding:.6rem;text-align:center">${r.t2}°C</td>
+      <td style="padding:.6rem;text-align:center">${r.t3}°C</td>
+      <td style="padding:.6rem;text-align:center">${r.moisture}%</td>
+      <td style="padding:.6rem;text-align:center">${r.status}</td>
+    </tr>`).join('');
+  }
 
-    // 🔹 Fetch and Display Summary
-    async function loadSummary() {
-      try {
-        const url = `https://api.thingspeak.com/channels/${channelID}/feeds.json?api_key=${readAPI}&results=10`;
-        const data = await (await fetch(url)).json();
-        const feeds = data.feeds;
+  function exportCSV(){
+    const rows = getHist();
+    if(!rows.length){ alert('No data to export'); return; }
+    const csv = ['Date,Temp1,Temp2,Temp3,Moisture,Status', ...rows.map(r=>`${r.date},${r.t1},${r.t2},${r.t3},${r.moisture},${r.status}`)].join('\n');
+    const blob = new Blob([csv], {type:'text/csv'}); const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'cacao_history.csv'; a.click(); URL.revokeObjectURL(url);
+  }
 
-        summaryBody.innerHTML = "";
-        feeds.slice(-5).forEach(feed => {
-          const date = new Date(feed.created_at).toLocaleDateString();
-          const row = `
-            <tr>
-              <td>${date}</td>
-              <td>${feed.field1 || "--"}°C</td>
-              <td>${feed.field2 || "--"}°C</td>
-              <td>${feed.field3 || "--"}°C</td>
-              <td>${feed.field4 || "--"}%</td>
-              <td>${feed.field9 || "N/A"}</td>
-            </tr>`;
-          summaryBody.innerHTML += row;
-        });
-      } catch (err) {
-        summaryBody.innerHTML = `<tr><td colspan="6">Error loading data.</td></tr>`;
-      }
-    }
+  function viewData(){
+    const date = document.getElementById('datePicker').value;
+    const disp = document.getElementById('dataDisplay');
+    if(!date){ disp.innerHTML = "<span style='color:#b00020'>Please select a date first.</span>"; return; }
+    const rec = getHist().find(x=>x.date===date);
+    if(rec) disp.innerHTML = `<strong>${date}</strong> — Temp1: ${rec.t1}°C, Temp2: ${rec.t2}°C, Temp3: ${rec.t3}°C, Moisture: ${rec.moisture}%, Status: ${rec.status}`;
+    else disp.innerHTML = `<strong>${date}</strong> — No data available.`;
+  }
 
-    loadSummary();
-
-    // 🔹 Export CSV
-    function exportCSV() {
-      const rows = [["Date","Temp1","Temp2","Temp3","Moisture","Status"]];
-      document.querySelectorAll("#summaryBody tr").forEach(tr => {
-        const cols = Array.from(tr.children).map(td => td.textContent);
-        rows.push(cols);
-      });
-      const csv = rows.map(e => e.join(",")).join("\n");
-      const blob = new Blob([csv], { type: "text/csv" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "cacao_drying_summary.csv";
-      a.click();
-    }
-
-    // 🔹 View Historical Data by Date
-    async function viewData() {
-      const date = document.getElementById("datePicker").value;
-      const display = document.getElementById("dataDisplay");
-      if (!date) {
-        display.innerHTML = `<p style='color:red;'>Please select a date first.</p>`;
-        return;
-      }
-
-      try {
-        const url = `https://api.thingspeak.com/channels/${channelID}/feeds.json?api_key=${readAPI}`;
-        const data = await (await fetch(url)).json();
-        const feeds = data.feeds.filter(f => f.created_at.startsWith(date));
-
-        if (feeds.length > 0) {
-          const avgT1 = avg(feeds.map(f => parseFloat(f.field1) || 0));
-          const avgT2 = avg(feeds.map(f => parseFloat(f.field2) || 0));
-          const avgT3 = avg(feeds.map(f => parseFloat(f.field3) || 0));
-          const avgMoist = avg(feeds.map(f => parseFloat(f.field4) || 0));
-          display.innerHTML = `
-            <p><strong>${date}</strong> Averages — 
-            Temp1: ${avgT1.toFixed(1)}°C, 
-            Temp2: ${avgT2.toFixed(1)}°C, 
-            Temp3: ${avgT3.toFixed(1)}°C, 
-            Moisture: ${avgMoist.toFixed(1)}%</p>`;
-        } else {
-          display.innerHTML = `<p>No records found for this date.</p>`;
-        }
-      } catch (err) {
-        display.innerHTML = `<p style='color:red;'>Error retrieving data.</p>`;
-      }
-    }
-
-    function avg(arr) {
-      const valid = arr.filter(v => !isNaN(v));
-      return valid.length ? valid.reduce((a,b) => a+b,0) / valid.length : 0;
-    }
-  </script>
-</body>
-</html>
+  document.getElementById('exportBtn').addEventListener('click', exportCSV);
+  renderTable();
+</script>
