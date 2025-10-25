@@ -8,132 +8,24 @@
   <meta name="theme-color" content="#40c057"/>
   <style>
     :root{
-      --green:#40c057; 
-      --brown:#6b3e26; 
-      --bg:#f8fafc; 
-      --panel:#ffffff; 
-      --text:#222; 
-      --muted:#666;
+      --green:#40c057; --brown:#6b3e26; --bg:#f8fafc; --panel:#ffffff; --text:#222; --muted:#666;
       --maxw:420px;
     }
     *{box-sizing:border-box;margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI;}
     html,body{height:100%}
-    body{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      min-height:100vh;
-      background:var(--bg);
-      padding:1rem;
-    }
-    .card{
-      width:100%;
-      max-width:920px;
-      display:flex;
-      gap:1rem;
-      border-radius:16px;
-      overflow:hidden;
-      box-shadow:0 8px 25px rgba(0,0,0,0.08);
-      background:var(--panel);
-    }
-
-    /* Left Section (Logo Image visible fully) */
-    .left{
-      flex:1;
-      min-height:220px;
-      background: linear-gradient(rgba(0,0,0,0.28),rgba(0,0,0,0.28)),
-        url('https://raw.githubusercontent.com/f-238/cacao-drying-monitor/main/cacao.png') center center / contain no-repeat;
-      background-color:#000; /* fallback background behind transparent areas */
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:1rem;
-    }
-
-    /* Optional: add a faint overlay to make it look professional */
-    .left::after {
-      content:"";
-      position:absolute;
-      top:0; left:0; right:0; bottom:0;
-      background:rgba(0,0,0,0.25);
-    }
-
-    .right{
-      width:100%;
-      max-width:var(--maxw);
-      padding:2rem;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-
+    body{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);padding:1rem}
+    .card{width:100%;max-width:920px;display:flex;gap:1rem;border-radius:16px;overflow:hidden;box-shadow:0 8px 25px rgba(0,0,0,0.08);background:var(--panel)}
+    .left{flex:1;min-height:220px;background:linear-gradient(rgba(0,0,0,0.28),rgba(0,0,0,0.28)),url('https://raw.githubusercontent.com/f-238/cacao-drying-monitor/main/cacao.png') center/center no-repeat}
+    .right{width:100%;max-width:var(--maxw);padding:2rem;display:flex;align-items:center;justify-content:center}
     .box{width:100%}
-
-    h2{
-      font-size:1.15rem;
-      color:var(--brown);
-      margin-bottom:1rem;
-      text-align:center;
-      font-weight:700;
-    }
-
-    input{
-      width:100%;
-      padding:.9rem;
-      border-radius:8px;
-      border:1px solid #e6e6e6;
-      margin-bottom:1rem;
-      font-size:1rem;
-    }
-
-    input:focus{
-      outline:none;
-      border-color:var(--green);
-      box-shadow:0 0 6px rgba(64,192,87,0.12);
-    }
-
-    button{
-      width:100%;
-      padding:.9rem;
-      border-radius:8px;
-      border:none;
-      background:linear-gradient(90deg,#69db7c,var(--green));
-      color:#fff;
-      font-weight:700;
-      cursor:pointer;
-    }
-
-    button:hover{
-      background:linear-gradient(90deg,#40c057,#2f9e44);
-      transform:scale(1.02);
-      transition:0.2s ease;
-    }
-
-    .helper{
-      text-align:center;
-      margin-top:.8rem;
-      font-size:.95rem;
-      color:var(--muted);
-    }
-
-    .helper a{
-      color:var(--green);
-      font-weight:600;
-      text-decoration:none;
-    }
-
-    .helper a:hover{text-decoration:underline;}
+    h2{font-size:1.15rem;color:var(--brown);margin-bottom:1rem;text-align:center;font-weight:700}
+    input{width:100%;padding:.9rem;border-radius:8px;border:1px solid #e6e6e6;margin-bottom:1rem;font-size:1rem}
+    input:focus{outline:none;border-color:var(--green);box-shadow:0 0 6px rgba(64,192,87,0.12)}
+    button{width:100%;padding:.9rem;border-radius:8px;border:none;background:linear-gradient(90deg,#69db7c,var(--green));color:#fff;font-weight:700;cursor:pointer}
+    .helper{text-align:center;margin-top:.8rem;font-size:.95rem;color:var(--muted)}
+    .helper a{color:var(--green);font-weight:600;text-decoration:none}
     .error{color:#e03131;text-align:center;margin-top:.5rem}
-
-    @media(max-width:900px){
-      .card{flex-direction:column}
-      .left{
-        height:200px;
-        background-size:contain;
-        background-position:center;
-      }
-      .right{padding:1.2rem}
-    }
+    @media(max-width:900px){.card{flex-direction:column}.left{height:180px}.right{padding:1.2rem}}
   </style>
 </head>
 <body>
@@ -152,44 +44,17 @@
   </div>
 
   <script>
-    async function hashPW(str){
-      const enc=new TextEncoder().encode(str);
-      const h=await crypto.subtle.digest('SHA-256',enc);
-      return Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join('');
-    }
+    async function hashPW(str){ const enc=new TextEncoder().encode(str); const h=await crypto.subtle.digest('SHA-256',enc); return Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join(''); }
     function getUsers(){ try{return JSON.parse(localStorage.getItem('cacao_users')||'[]')}catch{return[]} }
     function saveUsers(u){ localStorage.setItem('cacao_users', JSON.stringify(u)) }
-    function createSession(username){
-      const token=Math.random().toString(36).slice(2);
-      const expires=Date.now() + (30*60*1000);
-      localStorage.setItem('cacao_session', JSON.stringify({username,token,expires}));
-    }
-
+    function createSession(username){ const token=Math.random().toString(36).slice(2); const expires=Date.now() + (30*60*1000); localStorage.setItem('cacao_session', JSON.stringify({username,token,expires})); }
     document.getElementById('loginBtn').addEventListener('click', async ()=>{
-      const u=document.getElementById('username').value.trim();
-      const p=document.getElementById('password').value;
-      const err=document.getElementById('err');
-      err.textContent='';
+      const u=document.getElementById('username').value.trim(); const p=document.getElementById('password').value; const err=document.getElementById('err'); err.textContent='';
       if(!u||!p){ err.textContent='Enter username and password.'; return; }
-
-      const users=getUsers();
-      const hashed=await hashPW(p);
-      const found=users.find(x=>x.username===u&&x.hash===hashed);
-
-      if(found || (u==='admin'&&p==='cacao123')){
-        createSession(u);
-        location.href='monitor.html';
-      } else {
-        err.textContent='Invalid credentials. Please try again.';
-      }
+      const users=getUsers(); const hashed=await hashPW(p); const found=users.find(x=>x.username===u&&x.hash===hashed);
+      if(found || (u==='admin'&&p==='cacao123')){ createSession(u); location.href='monitor.html'; } else { err.textContent='Invalid credentials. Please try again.'; }
     });
-
-    (function checkSession(){
-      try{
-        const s=JSON.parse(localStorage.getItem('cacao_session')||'null');
-        if(s && s.expires > Date.now()){ location.href='monitor.html'; }
-      }catch(e){}
-    })();
+    (function checkSession(){ try{ const s=JSON.parse(localStorage.getItem('cacao_session')||'null'); if(s && s.expires > Date.now()){ location.href='monitor.html' } }catch(e){} })();
   </script>
 </body>
 </html>
