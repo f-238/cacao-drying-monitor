@@ -4,8 +4,19 @@
   <meta charset="UTF-8" />
   <title>CacaoTech Monitor</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0077b6">
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js")
+        .then(() => console.log("✅ Service Worker Registered"))
+        .catch(err => console.log("❌ Service Worker Error:", err));
+    }
+  </script>
 
   <style>
     :root {
@@ -29,20 +40,14 @@
       background: #fff;
     }
 
-    /* 🔹 Sidebar */
     .sidebar {
       width: 240px;
       background: var(--light-bg);
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
       padding-top: 1rem;
       border-right: 1px solid #ddd;
       transition: transform 0.3s ease;
-    }
-
-    .sidebar.collapsed {
-      transform: translateX(-100%);
     }
 
     .sidebar h2 {
@@ -78,7 +83,6 @@
       width: 100%;
     }
 
-    /* 🔹 Main Content */
     .main {
       flex: 1;
       display: flex;
@@ -106,21 +110,11 @@
       opacity: 0.9;
     }
 
-    .menu-toggle {
-      display: none;
-      font-size: 1.4rem;
-      background: none;
-      border: none;
-      color: white;
-      cursor: pointer;
-    }
-
     #content {
       flex: 1;
       overflow-y: auto;
       padding: 1.5rem;
       background: #fff;
-      border-radius: 0;
       transition: opacity 0.3s;
     }
 
@@ -133,7 +127,6 @@
       border-top: 1px solid #eee;
     }
 
-    /* 🔹 Mobile */
     @media (max-width: 768px) {
       .sidebar {
         position: fixed;
@@ -143,28 +136,22 @@
         z-index: 1000;
         transform: translateX(-100%);
       }
+      .sidebar.show { transform: translateX(0); }
+      .menu-toggle { display: block; }
+    }
 
-      .sidebar.show {
-        transform: translateX(0);
-      }
-
-      .menu-toggle {
-        display: block;
-      }
-
-      .main {
-        padding-top: 0;
-      }
-
-      #content {
-        padding: 1rem;
-      }
+    .menu-toggle {
+      display: none;
+      font-size: 1.4rem;
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
     }
   </style>
 </head>
 
 <body>
-  <!-- 🔹 Sidebar -->
   <div class="sidebar" id="sidebar">
     <h2>CacaoTech</h2>
     <a href="#" data-page="dashboard.html" class="active"><i class="fas fa-chart-line"></i> Dashboard</a>
@@ -173,12 +160,11 @@
     <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
   </div>
 
-  <!-- 🔹 Main -->
   <div class="main">
     <header>
       <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
       <h1>LoRa-Based Cacao Drying Monitoring System</h1>
-      <div class="user-info" id="userInfo">Welcome, Farmer</div>
+      <div class="user-info" id="userInfo"></div>
     </header>
 
     <div id="content">
@@ -189,38 +175,37 @@
   </div>
 
   <script>
-    // 🔹 Session Validation
+    // ✅ Session check
     const currentUser = localStorage.getItem("username");
     if (!currentUser) {
       window.location.href = "login.html";
     } else {
-      document.getElementById("userInfo").textContent = "👋 Welcome, " + currentUser;
+      document.getElementById("userInfo").textContent = "👋 " + currentUser;
     }
 
-    // 🔹 Sidebar Toggle (mobile)
+    // Sidebar toggle (for mobile)
     const sidebar = document.getElementById("sidebar");
     const menuToggle = document.getElementById("menuToggle");
-    menuToggle.addEventListener("click", () => {
-      sidebar.classList.toggle("show");
-    });
+    if (menuToggle) {
+      menuToggle.addEventListener("click", () => sidebar.classList.toggle("show"));
+    }
 
-    // 🔹 Dynamic Page Loading
+    // Dynamic page loader
     async function loadPage(page) {
       const content = document.getElementById("content");
       content.style.opacity = 0.5;
       content.innerHTML = "<p style='text-align:center;'>Loading...</p>";
       try {
         const res = await fetch(page);
-        if (!res.ok) throw new Error("Page load failed");
         const html = await res.text();
         content.innerHTML = html;
-      } catch (err) {
+      } catch {
         content.innerHTML = `<p style='color:red;text-align:center;'>Error loading ${page}</p>`;
       }
       content.style.opacity = 1;
     }
 
-    // 🔹 Sidebar Navigation
+    // Sidebar navigation
     const links = document.querySelectorAll(".sidebar a[data-page]");
     links.forEach(link => {
       link.addEventListener("click", e => {
@@ -232,30 +217,15 @@
       });
     });
 
-    // 🔹 Default Load Dashboard
+    // Default load
     loadPage("dashboard.html");
 
-    // 🔹 Logout
+    // Logout
     document.getElementById("logout-btn").addEventListener("click", e => {
       e.preventDefault();
       localStorage.removeItem("username");
       window.location.href = "login.html";
     });
-
-    // 🔹 Auto-Logout after 30 min of inactivity
-    let logoutTimer;
-    function resetTimer() {
-      clearTimeout(logoutTimer);
-      logoutTimer = setTimeout(() => {
-        alert("Session expired due to inactivity.");
-        localStorage.clear();
-        window.location.href = "login.html";
-      }, 1800000);
-    }
-    window.onload = resetTimer;
-    document.onmousemove = resetTimer;
-    document.onkeypress = resetTimer;
-    document.onclick = resetTimer;
   </script>
 </body>
 </html>
