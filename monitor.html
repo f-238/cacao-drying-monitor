@@ -7,76 +7,131 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
       margin: 0;
       background: #fff;
       color: #000;
       display: flex;
+      height: 100vh;
+      overflow: hidden;
     }
+
+    /* Sidebar */
     .sidebar {
-      width: 200px;
+      width: 220px;
       background: #f5f5f5;
-      padding-top: 1rem;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 1.5rem;
-      height: 100vh;
-      position: fixed;
       border-right: 1px solid #ccc;
+      height: 100vh;
+      overflow-y: auto;
+      position: fixed;
+      top: 0;
+      left: 0;
+      padding-top: 1rem;
     }
+
     .sidebar a {
       color: #333;
       text-decoration: none;
       padding: 1rem;
       width: 100%;
       display: flex;
-      justify-content: center;
-      gap: 8px;
-      transition: background .2s;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 10px;
       font-size: 1rem;
+      padding-left: 2rem;
+      transition: background 0.2s, color 0.2s;
     }
+
     .sidebar a:hover, .sidebar a.active {
       background: #ddd;
+      color: #000;
     }
+
     .sidebar a#logout-btn {
       color: #d00000;
-      margin-top: auto;
       font-weight: bold;
+      margin-top: auto;
+      border-top: 1px solid #ccc;
+      width: 100%;
+      text-align: left;
     }
+
+    /* Main Area */
     .main {
-      margin-left: 200px;
+      margin-left: 220px;
       padding: 2rem;
       flex: 1;
-      transition: opacity 0.3s ease-in-out;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow-y: auto;
     }
+
     header {
       background: radial-gradient(circle at center, #fff, #a2d2ff, #b5ead7);
       color: #000;
       text-align: center;
       padding: 1.5rem;
       border-radius: 1rem;
-      font-size: 1.5rem;
+      font-size: 1.3rem;
       font-weight: 600;
+      margin-bottom: 1.2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
+
     #content {
-      margin-top: 1.5rem;
+      flex: 1;
       background: #f9f9f9;
       border-radius: 12px;
       padding: 1.5rem;
       min-height: 70vh;
-      box-shadow: 0 2px 12px rgba(0,0,0,.1);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      transition: opacity 0.3s ease-in-out;
     }
+
+    #content > * {
+      text-align: left !important;
+      margin: 0 auto;
+      max-width: 100%;
+    }
+
     footer {
       text-align: center;
-      padding: 2rem;
+      padding: 1rem;
       font-size: .9rem;
       color: #666;
+      margin-top: 1rem;
     }
-    @media (max-width: 600px) {
-      .sidebar { display: none; }
-      .main { margin-left: 0; padding: 1rem; }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        flex-direction: row;
+        justify-content: space-around;
+        border-right: none;
+        border-bottom: 1px solid #ccc;
+      }
+
+      .sidebar a {
+        padding: 0.8rem;
+        font-size: 0.9rem;
+      }
+
+      .main {
+        margin-left: 0;
+        padding: 1rem;
+      }
     }
   </style>
 </head>
@@ -94,7 +149,6 @@
     </header>
 
     <div id="content">
-      <!-- Dynamic content will load here -->
       <p style="text-align:center;">Loading content...</p>
     </div>
 
@@ -107,7 +161,7 @@
       window.location.href = "login.html";
     }
 
-    // Auto-logout after 30 minutes of inactivity
+    // Auto logout after 30 minutes
     let logoutTimer;
     function resetTimer() {
       clearTimeout(logoutTimer);
@@ -115,14 +169,14 @@
         alert("Session expired due to inactivity.");
         localStorage.clear();
         window.location.href = "login.html";
-      }, 1800000); // 30 minutes
+      }, 1800000); // 30 min
     }
     window.onload = resetTimer;
     document.onmousemove = resetTimer;
     document.onkeypress = resetTimer;
     document.onclick = resetTimer;
 
-    // Load content dynamically
+    // Dynamic loading function
     async function loadPage(page) {
       const content = document.getElementById("content");
       content.style.opacity = 0.5;
@@ -139,22 +193,21 @@
       content.style.opacity = 1;
     }
 
-    // Sidebar navigation
+    // Sidebar link click behavior
     const links = document.querySelectorAll(".sidebar a[data-page]");
     links.forEach(link => {
       link.addEventListener("click", e => {
         e.preventDefault();
         links.forEach(l => l.classList.remove("active"));
         link.classList.add("active");
-        const page = link.getAttribute("data-page");
-        loadPage(page);
+        loadPage(link.getAttribute("data-page"));
       });
     });
 
-    // Load Dashboard by default
+    // Load dashboard by default
     loadPage("dashboard.html");
 
-    // Logout button
+    // Logout
     document.getElementById("logout-btn").addEventListener("click", e => {
       e.preventDefault();
       localStorage.clear();
