@@ -3,31 +3,41 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Register • Cacao Drying Monitoring</title>
+  <title>Register • CacaoTech Monitoring System</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    body {
-      font-family: 'Inter', sans-serif;
-      display: flex;
-      height: 100vh;
-      background-color: #f5f7fa;
+  <style>
+    :root {
+      --primary: #0077b6;
+      --accent: #0096c7;
+      --success: #40c057;
+      --error: #e03131;
+      --bg-light: #f5f7fa;
     }
 
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+
+    body {
+      display: flex;
+      height: 100vh;
+      background-color: var(--bg-light);
+    }
+
+    /* 🌅 Left Image */
     .left {
       flex: 1;
-      background: 
+      background:
         linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
         url('https://raw.githubusercontent.com/f-238/cacao-drying-monitor/main/cacao.png') center center / cover no-repeat;
     }
 
+    /* 🌞 Right Side */
     .right {
       flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: #ffffff;
+      background-color: #fff;
       padding: 2rem;
     }
 
@@ -38,37 +48,54 @@
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
       width: 100%;
       max-width: 380px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .register-box:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
     }
 
     .register-box h2 {
       text-align: center;
-      color: #333;
+      color: var(--primary);
+      font-weight: 600;
       margin-bottom: 1.5rem;
     }
 
-    input[type="text"], input[type="email"], input[type="password"] {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
       width: 100%;
       padding: 0.9rem;
       margin-bottom: 1.2rem;
       border: 1px solid #ccc;
       border-radius: 8px;
       font-size: 1rem;
+      transition: border 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 4px rgba(0, 119, 182, 0.4);
     }
 
     button {
       width: 100%;
       padding: 0.9rem;
-      background: linear-gradient(90deg, #69db7c, #40c057);
+      background: var(--primary);
       border: none;
       border-radius: 8px;
       color: #fff;
       font-weight: 600;
       cursor: pointer;
-      transition: 0.3s;
+      transition: background 0.3s ease, transform 0.2s ease;
     }
 
     button:hover {
-      background: linear-gradient(90deg, #40c057, #2f9e44);
+      background: var(--accent);
+      transform: scale(1.02);
     }
 
     .login-link {
@@ -78,7 +105,7 @@
     }
 
     .login-link a {
-      color: #40c057;
+      color: var(--primary);
       text-decoration: none;
       font-weight: 600;
     }
@@ -88,14 +115,14 @@
     }
 
     .success {
-      color: #40c057;
+      color: var(--success);
       text-align: center;
       font-size: 0.95rem;
       margin-top: .5rem;
     }
 
     .error {
-      color: #e03131;
+      color: var(--error);
       text-align: center;
       font-size: 0.95rem;
       margin-top: .5rem;
@@ -109,8 +136,10 @@
   </style>
 </head>
 <body>
+  <!-- Left: background -->
   <div class="left"></div>
 
+  <!-- Right: registration form -->
   <div class="right">
     <div class="register-box">
       <h2>Create Account</h2>
@@ -118,37 +147,51 @@
       <input type="email" id="regEmail" placeholder="Email" required />
       <input type="password" id="regPassword" placeholder="Password" required />
       <button onclick="register()">Register</button>
-      <div class="error" id="registerMsg"></div>
+
+      <div class="error" id="errorMsg"></div>
       <div class="success" id="successMsg"></div>
+
       <div class="login-link">
-        Already have an account? <a href="index.html">Login here</a>
+        Already have an account? <a href="login.html">Login here</a>
       </div>
     </div>
   </div>
 
   <script>
+    // Prevent already logged-in user from accessing register page
+    if (localStorage.getItem("username")) {
+      window.location.href = "monitor.html";
+    }
+
     function register() {
-      const username = document.getElementById("regUsername").value;
-      const email = document.getElementById("regEmail").value;
-      const password = document.getElementById("regPassword").value;
-      const errorMsg = document.getElementById("registerMsg");
-      const successMsg = document.getElementById("successMsg");
+      const username = document.getElementById("regUsername").value.trim();
+      const email = document.getElementById("regEmail").value.trim();
+      const password = document.getElementById("regPassword").value.trim();
+      const error = document.getElementById("errorMsg");
+      const success = document.getElementById("successMsg");
 
-      errorMsg.textContent = "";
-      successMsg.textContent = "";
+      error.textContent = "";
+      success.textContent = "";
 
+      // Validation
       if (!username || !email || !password) {
-        errorMsg.textContent = "Please fill in all fields.";
+        error.textContent = "Please fill in all fields.";
         return;
       }
 
+      if (localStorage.getItem("user") === username) {
+        error.textContent = "Username already exists. Please log in.";
+        return;
+      }
+
+      // Save credentials
       localStorage.setItem("user", username);
       localStorage.setItem("email", email);
-      localStorage.setItem("pass", password);
+      localStorage.setItem("pass", btoa(password)); // Encode password
 
-      successMsg.textContent = "Registration successful! Redirecting to login...";
+      success.textContent = "✅ Registration successful! Redirecting...";
       setTimeout(() => {
-        window.location.href = "index.html";
+        window.location.href = "login.html";
       }, 1500);
     }
   </script>
