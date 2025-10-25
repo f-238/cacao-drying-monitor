@@ -7,150 +7,85 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', sans-serif;
-    }
-
     body {
-      display: flex;
-      height: 100vh;
-      background-color: #ffffff;
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      background: #fff;
       color: #000;
-      overflow: hidden;
+      display: flex;
     }
-
-    /* Sidebar */
     .sidebar {
-      width: 240px;
-      background-color: #2f9e44;
-      color: white;
+      width: 200px;
+      background: #f5f5f5;
+      padding-top: 1rem;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
-      align-items: stretch;
-      padding: 1rem 0;
-      position: fixed;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      overflow-y: auto;
-    }
-
-    .sidebar h2 {
-      text-align: center;
-      margin-bottom: 2rem;
-      font-weight: 600;
-    }
-
-    .nav-link {
-      color: white;
-      text-decoration: none;
-      padding: 1rem 1.5rem;
-      display: flex;
       align-items: center;
-      gap: 10px;
-      transition: background 0.2s ease;
+      gap: 1.5rem;
+      height: 100vh;
+      position: fixed;
+      border-right: 1px solid #ccc;
+    }
+    .sidebar a {
+      color: #333;
+      text-decoration: none;
+      padding: 1rem;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      transition: background .2s;
       font-size: 1rem;
     }
-
-    .nav-link:hover,
-    .nav-link.active {
-      background-color: #37b24d;
+    .sidebar a:hover, .sidebar a.active {
+      background: #ddd;
     }
-
-    #logout-btn {
+    .sidebar a#logout-btn {
+      color: #d00000;
       margin-top: auto;
-      padding: 1rem 1.5rem;
-      border-top: 1px solid rgba(255,255,255,0.2);
-      color: #ffd6d6;
-      font-weight: 600;
-      cursor: pointer;
+      font-weight: bold;
     }
-
-    #logout-btn:hover {
-      background: #d00000;
-      color: white;
-    }
-
-    /* Main Content */
     .main {
-      margin-left: 240px;
+      margin-left: 200px;
+      padding: 2rem;
       flex: 1;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      overflow: hidden;
-      background-color: #f8fafc;
+      transition: opacity 0.3s ease-in-out;
     }
-
     header {
+      background: radial-gradient(circle at center, #fff, #a2d2ff, #b5ead7);
+      color: #000;
       text-align: center;
-      background: linear-gradient(90deg, #37b24d, #2f9e44);
-      color: white;
       padding: 1.5rem;
-      font-size: 1.2rem;
+      border-radius: 1rem;
+      font-size: 1.5rem;
       font-weight: 600;
-      letter-spacing: 0.5px;
     }
-
     #content {
-      flex: 1;
-      overflow-y: auto;
+      margin-top: 1.5rem;
+      background: #f9f9f9;
+      border-radius: 12px;
       padding: 1.5rem;
-      background-color: #ffffff;
-      border-top-left-radius: 12px;
-      border-top-right-radius: 12px;
+      min-height: 70vh;
+      box-shadow: 0 2px 12px rgba(0,0,0,.1);
     }
-
-    #content iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-
     footer {
       text-align: center;
-      padding: 0.8rem;
-      background-color: #f1f3f5;
-      font-size: 0.9rem;
-      color: #555;
+      padding: 2rem;
+      font-size: .9rem;
+      color: #666;
     }
-
-    @media (max-width: 768px) {
-      body {
-        flex-direction: column;
-      }
-      .sidebar {
-        flex-direction: row;
-        width: 100%;
-        height: auto;
-        position: relative;
-      }
-      .main {
-        margin-left: 0;
-      }
-      .nav-link {
-        flex: 1;
-        justify-content: center;
-        padding: 0.8rem;
-      }
-      #logout-btn {
-        margin-top: 0;
-        border-top: none;
-      }
+    @media (max-width: 600px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 1rem; }
     }
   </style>
 </head>
 <body>
   <div class="sidebar">
-    <h2>CacaoTech</h2>
-    <a href="#" class="nav-link active" data-page="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
-    <a href="#" class="nav-link" data-page="overview.html"><i class="fas fa-book"></i> Overview</a>
-    <a href="#" class="nav-link" data-page="data-summary.html"><i class="fas fa-table"></i> Data Summary</a>
-    <div id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</div>
+    <a href="#" data-page="dashboard.html" class="active"><i class="fas fa-chart-line"></i> Dashboard</a>
+    <a href="#" data-page="overview.html"><i class="fas fa-file-alt"></i> Overview</a>
+    <a href="#" data-page="data-summary.html"><i class="fas fa-table"></i> Data&nbsp;Summary</a>
+    <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
   </div>
 
   <div class="main">
@@ -159,39 +94,20 @@
     </header>
 
     <div id="content">
-      <iframe id="content-frame" src="dashboard.html"></iframe>
+      <!-- Dynamic content will load here -->
+      <p style="text-align:center;">Loading content...</p>
     </div>
 
-    <footer>&copy; 2025 CacaoTech | Smart Cacao Drying System</footer>
+    <footer>&copy; 2025 Cacao Drying Monitoring • Powered by ThingSpeak</footer>
   </div>
 
   <script>
-    // Check login
+    // Redirect to login if not logged in
     if (localStorage.getItem("loggedIn") !== "true") {
       window.location.href = "login.html";
     }
 
-    // Load page dynamically into iframe
-    const iframe = document.getElementById("content-frame");
-    const links = document.querySelectorAll(".nav-link");
-
-    links.forEach(link => {
-      link.addEventListener("click", e => {
-        e.preventDefault();
-        links.forEach(l => l.classList.remove("active"));
-        link.classList.add("active");
-        const page = link.getAttribute("data-page");
-        iframe.src = page;
-      });
-    });
-
-    // Logout
-    document.getElementById("logout-btn").addEventListener("click", () => {
-      localStorage.removeItem("loggedIn");
-      window.location.href = "login.html";
-    });
-
-    // Auto logout timer (optional)
+    // Auto-logout after 30 minutes of inactivity
     let logoutTimer;
     function resetTimer() {
       clearTimeout(logoutTimer);
@@ -204,6 +120,46 @@
     window.onload = resetTimer;
     document.onmousemove = resetTimer;
     document.onkeypress = resetTimer;
+    document.onclick = resetTimer;
+
+    // Load content dynamically
+    async function loadPage(page) {
+      const content = document.getElementById("content");
+      content.style.opacity = 0.5;
+      content.innerHTML = "<p style='text-align:center;'>Loading...</p>";
+
+      try {
+        const res = await fetch(page);
+        if (!res.ok) throw new Error("Failed to load page");
+        const html = await res.text();
+        content.innerHTML = html;
+      } catch (err) {
+        content.innerHTML = `<p style='color:red;text-align:center;'>Error loading ${page}</p>`;
+      }
+      content.style.opacity = 1;
+    }
+
+    // Sidebar navigation
+    const links = document.querySelectorAll(".sidebar a[data-page]");
+    links.forEach(link => {
+      link.addEventListener("click", e => {
+        e.preventDefault();
+        links.forEach(l => l.classList.remove("active"));
+        link.classList.add("active");
+        const page = link.getAttribute("data-page");
+        loadPage(page);
+      });
+    });
+
+    // Load Dashboard by default
+    loadPage("dashboard.html");
+
+    // Logout button
+    document.getElementById("logout-btn").addEventListener("click", e => {
+      e.preventDefault();
+      localStorage.clear();
+      window.location.href = "login.html";
+    });
   </script>
 </body>
 </html>
