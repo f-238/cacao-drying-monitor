@@ -9,70 +9,110 @@
   <link rel="manifest" href="manifest.json">
   <style>
     :root{
-      --bg:#fff; --muted:#666; --accent:#40c057; --panel:#f9f9f9; --sidebar:#f5f5f5;
-      --max-width:1100px;
+      --bg:#fff; --muted:#666; --accent:#40c057; --panel:#f9f9f9;
     }
     *{box-sizing:border-box}
     html,body{height:100%;margin:0;font-family:Inter,system-ui;background:var(--bg);color:#000}
-    .app{display:flex;min-height:100vh;max-width:var(--max-width);margin:0 auto}
-    /* Sidebar / nav */
-    .sidebar{width:220px;background:var(--sidebar);padding-top:1rem;border-right:1px solid #e6e6e6;display:flex;flex-direction:column;align-items:flex-start;gap:0.2rem;position:sticky;top:0;height:100vh}
-    .nav-btn{width:100%;padding:0.9rem 1rem;text-decoration:none;color:#333;display:flex;gap:12px;align-items:center;cursor:pointer;border-left:4px solid transparent}
-    .nav-btn.active{background:#e9f7ee;border-left-color:var(--accent);color:#000;font-weight:600}
-    .nav-btn:hover{background:#eee}
-    .logout{margin-top:auto;padding:1rem;width:100%;color:#b00020;border-top:1px solid #e6e6e6;cursor:pointer}
-    /* Main area */
-    .main{flex:1;padding:1.2rem;min-height:100vh;display:flex;flex-direction:column}
-    header{background:radial-gradient(circle at center,#fff,#a2d2ff,#b5ead7);padding:1rem;border-radius:10px;text-align:center;font-weight:700;margin-bottom:1rem}
-    #content{flex:1;background:var(--panel);padding:1rem;border-radius:10px;overflow:auto;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
-    footer{text-align:center;color:var(--muted);margin-top:1rem}
-    /* mobile bottom nav */
-    .bottom-nav{display:none;position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid #ddd;display:flex;justify-content:space-around;padding:.4rem 0}
-    .bottom-nav button{background:none;border:none;padding:.6rem .8rem;border-radius:8px;cursor:pointer;font-weight:600}
-    .bottom-nav button.active{color:var(--accent)}
-    /* responsive */
-    @media (max-width:900px){
-      .app{flex-direction:column}
-      .sidebar{width:100%;height:auto;position:relative;flex-direction:row;justify-content:space-around;border-right:none;border-bottom:1px solid #e6e6e6;padding:0.4rem 0}
-      .main{padding:0.9rem}
-      .bottom-nav{display:flex}
+    body{display:flex;flex-direction:column;min-height:100vh}
+    header{
+      background:radial-gradient(circle at center,#fff,#a2d2ff,#b5ead7);
+      padding:1.2rem;
+      border-radius:0 0 12px 12px;
+      text-align:center;
+      font-weight:700;
+      font-size:1.1rem;
+      box-shadow:0 2px 8px rgba(0,0,0,0.05);
     }
-    /* small utility */
+    main{
+      flex:1;
+      padding:1rem;
+      display:flex;
+      flex-direction:column;
+    }
+    #content{
+      flex:1;
+      background:var(--panel);
+      padding:1rem;
+      border-radius:10px;
+      overflow:auto;
+      box-shadow:0 2px 12px rgba(0,0,0,0.06);
+    }
+    footer{
+      background:#fff;
+      border-top:1px solid #ddd;
+      padding:.6rem 1rem;
+      text-align:center;
+      display:flex;
+      flex-direction:column;
+      gap:.5rem;
+    }
+    .bottom-nav{
+      display:flex;
+      justify-content:center;
+      gap:1.2rem;
+      flex-wrap:wrap;
+    }
+    .bottom-nav button{
+      background:none;
+      border:none;
+      color:#333;
+      font-weight:600;
+      cursor:pointer;
+      padding:.5rem .8rem;
+      border-radius:8px;
+      transition:background .2s;
+    }
+    .bottom-nav button.active{
+      color:var(--accent);
+      background:#e9f7ee;
+    }
+    #logoutBtn{
+      background:linear-gradient(90deg,#fa5252,#e03131);
+      color:#fff;
+      border:none;
+      border-radius:8px;
+      padding:.5rem 1rem;
+      font-weight:600;
+      cursor:pointer;
+      width:fit-content;
+      margin:0 auto .3rem;
+    }
+    #logoutBtn:hover{opacity:.9}
     .loading{text-align:center;padding:3rem;color:var(--muted)}
   </style>
 </head>
 <body>
-  <div class="app" role="application">
-    <nav class="sidebar" aria-label="Primary">
-      <a class="nav-btn active" data-page="dashboard.html">📊 Dashboard</a>
-      <a class="nav-btn" data-page="overview.html">📄 Overview</a>
-      <a class="nav-btn" data-page="data-summary.html">📁 Data Summary</a>
-      <div class="logout" id="logoutBtn">🚪 Logout</div>
-    </nav>
+  <header>
+    Development and Implementation of a Wireless Monitoring System for Theobroma Cacao Drying Process
+  </header>
 
-    <main class="main">
-      <header>Development and Implementation of a Wireless Monitoring System for Theobroma Cacao Drying Process</header>
+  <main>
+    <div id="content" aria-live="polite">
+      <div class="loading">Loading content...</div>
+    </div>
+  </main>
 
-      <div id="content" aria-live="polite">
-        <div class="loading">Loading content...</div>
-      </div>
-
-      <footer>&copy; <span id="y"></span> Cacao Drying Monitoring • Powered by ThingSpeak</footer>
-    </main>
-  </div>
-
-  <!-- bottom nav (mobile) -->
-  <div class="bottom-nav" role="toolbar" aria-label="Mobile navigation">
-    <button data-page="dashboard.html" class="active">Dashboard</button>
-    <button data-page="overview.html">Overview</button>
-    <button data-page="data-summary.html">Data</button>
-  </div>
+  <footer>
+    <div class="bottom-nav" role="toolbar" aria-label="Navigation">
+      <button data-page="dashboard.html" class="active">Dashboard</button>
+      <button data-page="overview.html">Overview</button>
+      <button data-page="data-summary.html">Data</button>
+    </div>
+    <button id="logoutBtn">Logout</button>
+    <div style="font-size:.9rem;color:#666">&copy; <span id="y"></span> Cacao Drying Monitoring • Powered by ThingSpeak</div>
+  </footer>
 
   <div id="toast" style="display:none;position:fixed;left:50%;transform:translateX(-50%);bottom:16px;background:#222;color:#fff;padding:.6rem 1rem;border-radius:10px;z-index:9999"></div>
 
   <script>
     // Toast
-    function toast(msg, t=2000){ const s = document.getElementById('toast'); s.textContent=msg; s.style.display='block'; clearTimeout(s._h); s._h=setTimeout(()=>s.style.display='none',t); }
+    function toast(msg, t=2000){
+      const s = document.getElementById('toast');
+      s.textContent=msg;
+      s.style.display='block';
+      clearTimeout(s._h);
+      s._h=setTimeout(()=>s.style.display='none',t);
+    }
 
     // Session validation
     function sessionValid(){
@@ -81,12 +121,24 @@
         return s && s.expires > Date.now();
       }catch{return false;}
     }
-    if(!sessionValid()){ localStorage.removeItem('cacao_session'); window.location.href='index.html' }
+    if(!sessionValid()){ localStorage.removeItem('cacao_session'); window.location.href='index.html'; }
 
-    // Extend session on activity and auto-logout when expired
-    function extendSession(){ try{ const s=JSON.parse(localStorage.getItem('cacao_session')); if(s){ s.expires = Date.now() + (30*60*1000); localStorage.setItem('cacao_session', JSON.stringify(s)); } }catch(e){} }
+    // Extend session
+    function extendSession(){
+      try{
+        const s=JSON.parse(localStorage.getItem('cacao_session'));
+        if(s){ s.expires = Date.now() + (30*60*1000); localStorage.setItem('cacao_session', JSON.stringify(s)); }
+      }catch(e){}
+    }
     let logoutTimer;
-    function startAutoLogout(){ clearTimeout(logoutTimer); logoutTimer = setTimeout(()=>{ toast('Session expired'); localStorage.removeItem('cacao_session'); setTimeout(()=>location.href='index.html',800); }, 30*60*1000); }
+    function startAutoLogout(){
+      clearTimeout(logoutTimer);
+      logoutTimer = setTimeout(()=>{
+        toast('Session expired');
+        localStorage.removeItem('cacao_session');
+        setTimeout(()=>location.href='index.html',800);
+      }, 30*60*1000);
+    }
     ['mousemove','keydown','click','touchstart'].forEach(e=>document.addEventListener(e, ()=>{ extendSession(); startAutoLogout(); }));
     startAutoLogout();
 
@@ -104,43 +156,32 @@
       }
     }
 
-    // nav handling
-    const navs = document.querySelectorAll('.nav-btn');
-    navs.forEach(n=>{
-      n.addEventListener('click', ()=>{
-        navs.forEach(x=>x.classList.remove('active'));
-        n.classList.add('active');
-        loadPage(n.dataset.page);
-      });
-    });
-    // bottom nav
+    // Bottom nav
     document.querySelectorAll('.bottom-nav button').forEach(b=>{
       b.addEventListener('click', ()=>{
         document.querySelectorAll('.bottom-nav button').forEach(x=>x.classList.remove('active'));
         b.classList.add('active');
-        // also activate sidebar links
-        navs.forEach(x=>{ x.classList.toggle('active', x.dataset.page === b.dataset.page) });
         loadPage(b.dataset.page);
         window.scrollTo({top:0,behavior:'smooth'});
       });
     });
 
-    // default page
+    // Default page
     loadPage('dashboard.html');
 
-    // logout
+    // Logout
     document.getElementById('logoutBtn').addEventListener('click', ()=>{
       localStorage.removeItem('cacao_session');
       toast('Logged out');
-      setTimeout(()=> location.href = 'index.html', 700);
+      setTimeout(()=> location.href='index.html', 700);
     });
 
-    // footer year
+    // Footer year
     document.getElementById('y').textContent = new Date().getFullYear();
 
-    // Register service worker for PWA
+    // Service Worker
     if('serviceWorker' in navigator){
-      navigator.serviceWorker.register('sw.js').then(()=>console.log('SW registered')).catch(()=>console.log('SW failed'));
+      navigator.serviceWorker.register('sw.js').catch(()=>{});
     }
   </script>
 </body>
