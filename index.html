@@ -3,49 +3,29 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Login • CacaoDry</title>
+  <title>Login • Cacao Drying Monitor</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <meta name="theme-color" content="#40c057"/>
-  <link rel="manifest" href="manifest.json">
   <style>
     :root{
-      --bg:#f5f7fa; --panel:#fff; --accent:#40c057; --accent-2:#69db7c; --muted:#666;
-      --maxw:380px;
+      --green:#40c057; --brown:#6b3e26; --bg:#f8fafc; --panel:#ffffff; --text:#222; --muted:#666;
+      --maxw:420px;
     }
-    *{box-sizing:border-box;margin:0;padding:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system;}
+    *{box-sizing:border-box;margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI;}
     html,body{height:100%}
-    body{
-      display:flex; flex-direction:column;
-      min-height:100vh; background:var(--bg); align-items:center; justify-content:center; padding:1rem;
-    }
-    .card{
-      width:100%; max-width:920px; display:flex; gap:1rem; border-radius:16px; overflow:hidden;
-      box-shadow:0 8px 25px rgba(0,0,0,0.08); background:var(--panel);
-    }
-    .left{
-      flex:1; min-height:260px;
-      background:
-        linear-gradient(rgba(0,0,0,0.28),rgba(0,0,0,0.28)),
-        url('https://raw.githubusercontent.com/f-238/cacao-drying-monitor/main/cacao.png') center/cover no-repeat;
-    }
-    .right{
-      width:100%; max-width:var(--maxw); padding:2rem; display:flex; align-items:center; justify-content:center;
-    }
-    .box{width:100%;}
-    h2{font-size:1.2rem; color:#222; margin-bottom:1rem; text-align:center; font-weight:600}
-    input{width:100%; padding:.9rem; border-radius:8px; border:1px solid #dcdcdc; margin-bottom:1rem; font-size:1rem;}
-    input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 6px rgba(64,192,87,0.12)}
-    button{width:100%; padding:.9rem; border-radius:8px; border:none; background:linear-gradient(90deg,var(--accent-2),var(--accent)); color:#fff; font-weight:700; cursor:pointer}
+    body{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);padding:1rem}
+    .card{width:100%;max-width:920px;display:flex;gap:1rem;border-radius:16px;overflow:hidden;box-shadow:0 8px 25px rgba(0,0,0,0.08);background:var(--panel)}
+    .left{flex:1;min-height:220px;background:linear-gradient(rgba(0,0,0,0.28),rgba(0,0,0,0.28)),url('https://raw.githubusercontent.com/f-238/cacao-drying-monitor/main/cacao.png') center/cover no-repeat}
+    .right{width:100%;max-width:var(--maxw);padding:2rem;display:flex;align-items:center;justify-content:center}
+    .box{width:100%}
+    h2{font-size:1.15rem;color:var(--brown);margin-bottom:1rem;text-align:center;font-weight:700}
+    input{width:100%;padding:.9rem;border-radius:8px;border:1px solid #e6e6e6;margin-bottom:1rem;font-size:1rem}
+    input:focus{outline:none;border-color:var(--green);box-shadow:0 0 6px rgba(64,192,87,0.12)}
+    button{width:100%;padding:.9rem;border-radius:8px;border:none;background:linear-gradient(90deg,#69db7c,var(--green));color:#fff;font-weight:700;cursor:pointer}
     .helper{text-align:center;margin-top:.8rem;font-size:.95rem;color:var(--muted)}
-    .helper a{color:var(--accent); font-weight:600; text-decoration:none}
+    .helper a{color:var(--green);font-weight:600;text-decoration:none}
     .error{color:#e03131;text-align:center;margin-top:.5rem}
-    /* toasts */
-    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:20px;background:#222;color:#fff;padding:.6rem 1rem;border-radius:10px;display:none;z-index:9999}
-    @media (max-width:900px){
-      .card{flex-direction:column}
-      .left{height:220px}
-      .right{padding:1.2rem}
-    }
+    @media(max-width:900px){.card{flex-direction:column}.left{height:180px}.right{padding:1.2rem}}
   </style>
 </head>
 <body>
@@ -63,55 +43,18 @@
     </div>
   </div>
 
-  <div class="toast" id="toast"></div>
-
   <script>
-    // Utilities: toast
-    function toast(msg, time=2500){ const t = document.getElementById('toast'); t.textContent = msg; t.style.display = 'block'; clearTimeout(t._h); t._h = setTimeout(()=> t.style.display='none', time); }
-
-    // Hash password with SHA-256
-    async function hashPW(str){
-      const enc = new TextEncoder().encode(str);
-      const hash = await crypto.subtle.digest('SHA-256', enc);
-      return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
-    }
-
-    // Get users array from localStorage
-    function getUsers(){ try{ return JSON.parse(localStorage.getItem('cacao_users')||'[]') }catch(e){ return [] } }
+    async function hashPW(str){ const enc=new TextEncoder().encode(str); const h=await crypto.subtle.digest('SHA-256',enc); return Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join(''); }
+    function getUsers(){ try{return JSON.parse(localStorage.getItem('cacao_users')||'[]')}catch{return[]} }
     function saveUsers(u){ localStorage.setItem('cacao_users', JSON.stringify(u)) }
-
-    // Session setter
-    function createSession(username){
-      const token = Math.random().toString(36).slice(2);
-      const expires = Date.now() + (30*60*1000); // 30 minutes
-      localStorage.setItem('cacao_session', JSON.stringify({username,token,expires}));
-    }
-
-    // Login flow
+    function createSession(username){ const token=Math.random().toString(36).slice(2); const expires=Date.now() + (30*60*1000); localStorage.setItem('cacao_session', JSON.stringify({username,token,expires})); }
     document.getElementById('loginBtn').addEventListener('click', async ()=>{
-      const u = document.getElementById('username').value.trim();
-      const p = document.getElementById('password').value;
-      const err = document.getElementById('err'); err.textContent='';
-      if(!u||!p){ err.textContent = 'Enter username and password.'; return; }
-      const users = getUsers();
-      const hashed = await hashPW(p);
-      const found = users.find(x => x.username === u && x.hash === hashed);
-      if(found || (u==='admin' && p==='cacao123')) {
-        createSession(u);
-        toast('Login successful — redirecting...');
-        setTimeout(()=> location.href = 'monitor.html', 700);
-      } else {
-        err.textContent = 'Invalid credentials. Please try again.';
-      }
+      const u=document.getElementById('username').value.trim(); const p=document.getElementById('password').value; const err=document.getElementById('err'); err.textContent='';
+      if(!u||!p){ err.textContent='Enter username and password.'; return; }
+      const users=getUsers(); const hashed=await hashPW(p); const found=users.find(x=>x.username===u&&x.hash===hashed);
+      if(found || (u==='admin'&&p==='cacao123')){ createSession(u); location.href='monitor.html'; } else { err.textContent='Invalid credentials. Please try again.'; }
     });
-
-    // Quick redirect if session valid
-    (function checkSession(){
-      try{
-        const s = JSON.parse(localStorage.getItem('cacao_session')||'null');
-        if(s && s.expires > Date.now()){ location.href = 'monitor.html' }
-      }catch(e){}
-    })();
+    (function checkSession(){ try{ const s=JSON.parse(localStorage.getItem('cacao_session')||'null'); if(s && s.expires > Date.now()){ location.href='monitor.html' } }catch(e){} })();
   </script>
 </body>
 </html>
