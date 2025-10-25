@@ -1,58 +1,33 @@
-<!-- dashboard.html (fragment loaded into monitor.html's #content) -->
 <div style="padding:1rem;">
-  <h2 style="margin:0 0 1rem;text-align:center">👋 Welcome, Cacao Farmer!</h2>
-  <p class="welcome" style="text-align:center;color:#555;margin-bottom:1.2rem">Monitor your real-time drying conditions to ensure optimal cacao bean quality.</p>
-
+  <h2 style="margin:0 0 1rem;text-align:center;color:#6b3e26">👋 Welcome, Cacao Farmer!</h2>
+  <p style="text-align:center;color:#555;margin-bottom:1.2rem">Monitor your real-time drying conditions and ensure optimal cacao bean quality.</p>
   <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:center">
-    <div style="width:140px;background:#f9f9f9;padding:1rem;border-radius:12px;text-align:center;border:1px solid #eee">
-      <h3 style="margin:.2rem 0">Temperature 1</h3><p id="temperature1" style="font-size:1.4rem;color:#0077b6">--</p>
+    <div style="width:140px;background:#fff;padding:1rem;border-radius:12px;text-align:center;border:1px solid #eee;box-shadow:0 3px 10px rgba(0,0,0,0.04)">
+      <h3 style="margin:.2rem 0;color:#333">Temperature 1</h3><p id="temperature1" style="font-size:1.4rem;color:#0077b6">--</p>
     </div>
-    <div style="width:140px;background:#f9f9f9;padding:1rem;border-radius:12px;text-align:center;border:1px solid #eee">
-      <h3 style="margin:.2rem 0">Temperature 2</h3><p id="temperature2" style="font-size:1.4rem;color:#0077b6">--</p>
+    <div style="width:140px;background:#fff;padding:1rem;border-radius:12px;text-align:center;border:1px solid #eee;box-shadow:0 3px 10px rgba(0,0,0,0.04)">
+      <h3 style="margin:.2rem 0;color:#333">Temperature 2</h3><p id="temperature2" style="font-size:1.4rem;color:#0077b6">--</p>
     </div>
-    <div style="width:140px;background:#f9f9f9;padding:1rem;border-radius:12px;text-align:center;border:1px solid #eee">
-      <h3 style="margin:.2rem 0">Temperature 3</h3><p id="temperature3" style="font-size:1.4rem;color:#0077b6">--</p>
+    <div style="width:140px;background:#fff;padding:1rem;border-radius:12px;text-align:center;border:1px solid #eee;box-shadow:0 3px 10px rgba(0,0,0,0.04)">
+      <h3 style="margin:.2rem 0;color:#333">Temperature 3</h3><p id="temperature3" style="font-size:1.4rem;color:#0077b6">--</p>
     </div>
-    <div style="width:140px;background:#f9f9f9;padding:1rem;border-radius:12px;text-align:center;border:1px solid #eee">
-      <h3 style="margin:.2rem 0">Moisture %</h3><p id="moisture" style="font-size:1.4rem;color:#0077b6">--</p>
+    <div style="width:140px;background:#fff;padding:1rem;border-radius:12px;text-align:center;border:1px solid #eee;box-shadow:0 3px 10px rgba(0,0,0,0.04)">
+      <h3 style="margin:.2rem 0;color:#333">Moisture %</h3><p id="moisture" style="font-size:1.4rem;color:#0077b6">--</p>
     </div>
-    <div style="width:140px;background:#f9f9f9;padding:1rem;border-radius:12px;text-align:center;border:1px solid #eee">
-      <h3 style="margin:.2rem 0">Status</h3><p id="dryingStatus" style="font-size:1.1rem;color:#333">--</p>
+    <div style="width:140px;background:#fff;padding:1rem;border-radius:12px;text-align:center;border:1px solid #eee;box-shadow:0 3px 10px rgba(0,0,0,0.04)">
+      <h3 style="margin:.2rem 0;color:#333">Status</h3><p id="dryingStatus" style="font-size:1.1rem;color:#333">--</p>
     </div>
-    <div style="width:140px;background:#f9f9f9;padding:1rem;border-radius:12px;text-align:center;border:1px solid #eee">
-      <h3 style="margin:.2rem 0">Weather</h3><p id="weather" style="font-size:1.1rem;color:#333">--</p>
+    <div style="width:140px;background:#fff;padding:1rem;border-radius:12px;text-align:center;border:1px solid #eee;box-shadow:0 3px 10px rgba(0,0,0,0.04)">
+      <h3 style="margin:.2rem 0;color:#333">Weather</h3><p id="weather" style="font-size:1.1rem;color:#333">--</p>
     </div>
   </div>
+  <p id="updateTime" style="text-align:center;color:#666;margin-top:1rem;font-size:.95rem">Last updated: --</p>
 </div>
 
 <script>
-  const channelID = 2770965;
-  const readAPI = "LJ902FFDJSJOBZYJ";
-
-  async function fetchData() {
-    const url = `https://api.thingspeak.com/channels/${channelID}/feeds/last.json?api_key=${readAPI}`;
-    try {
-      const d = await (await fetch(url)).json();
-      document.getElementById("temperature1").textContent = d.field1 ? `${d.field1}°C` : '--';
-      document.getElementById("temperature2").textContent = d.field2 ? `${d.field2}°C` : '--';
-      document.getElementById("temperature3").textContent = d.field3 ? `${d.field3}°C` : '--';
-      document.getElementById("moisture").textContent = d.field4 ? `${d.field4}%` : '--';
-      document.getElementById("dryingStatus").textContent = d.field9 || "N/A";
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  async function fetchWeather() {
-    try {
-      const t = await (await fetch("https://wttr.in/Talamban%20Cebu%20City?format=%t")).text();
-      document.getElementById("weather").textContent = t;
-    } catch {
-      document.getElementById("weather").textContent = "N/A";
-    }
-  }
-
-  fetchData();
-  fetchWeather();
-  setInterval(()=>{ fetchData(); fetchWeather(); }, 30000);
+const channelID = 2770965;
+const readAPI = "LJ902FFDJSJOBZYJ";
+async function fetchData(){ const url=`https://api.thingspeak.com/channels/${channelID}/feeds/last.json?api_key=${readAPI}`; try{ const d=await (await fetch(url)).json(); document.getElementById("temperature1").textContent = d.field1 ? d.field1+'°C' : '--'; document.getElementById("temperature2").textContent = d.field2 ? d.field2+'°C' : '--'; document.getElementById("temperature3").textContent = d.field3 ? d.field3+'°C' : '--'; document.getElementById("moisture").textContent = d.field4 ? d.field4+'%' : '--'; document.getElementById("dryingStatus").textContent = d.field9 || 'N/A'; document.getElementById('updateTime').textContent = 'Last updated: ' + new Date().toLocaleString(); }catch(e){ console.error(e); } }
+async function fetchWeather(){ try{ const t = await (await fetch('https://wttr.in/Talamban%20Cebu%20City?format=%t')).text(); document.getElementById("weather").textContent = t; }catch(e){ document.getElementById("weather").textContent = 'N/A'; } }
+fetchData(); fetchWeather(); setInterval(()=>{ fetchData(); fetchWeather(); },30000);
 </script>
