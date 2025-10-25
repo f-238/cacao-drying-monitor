@@ -3,72 +3,42 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login • CacaoTech Monitoring System</title>
+  <title>Login • Cacao Drying Monitoring</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-
   <style>
-    :root {
-      --primary: #0077b6;
-      --accent: #0096c7;
-      --success: #40c057;
-      --error: #e03131;
-      --bg-light: #f5f7fa;
-    }
-
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Inter', sans-serif;
     }
 
     body {
+      font-family: 'Inter', sans-serif;
       display: flex;
       height: 100vh;
-      background-color: var(--bg-light);
+      background-color: #f5f7fa;
     }
 
-    /* Left Image Section */
+    /* 🌅 Left side background image */
     .left {
       flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
+      background: 
+        linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
         url('https://raw.githubusercontent.com/f-238/cacao-drying-monitor/main/cacao.png') center center / cover no-repeat;
-      position: relative;
     }
 
-    /* CacaoTech Logo Overlay */
-    .logo-container {
-      position: absolute;
-      bottom: 10%;
-      text-align: center;
-      width: 100%;
-    }
-
-    .logo-container img {
-      width: 220px;
-      max-width: 70%;
-      height: auto;
-      object-fit: contain;
-      display: block;
-      margin: 0 auto;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
-    }
-
-    /* Right Login Section */
+    /* 🌞 Right side login section */
     .right {
       flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #fff;
+      background-color: #ffffff;
       padding: 2rem;
     }
 
     .login-box {
-      background: #fff;
+      background: #ffffff;
       border-radius: 16px;
       padding: 2.5rem;
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
@@ -84,12 +54,14 @@
 
     .login-box h2 {
       text-align: center;
-      color: var(--primary);
+      color: #333;
       font-weight: 600;
       margin-bottom: 1.5rem;
     }
 
-    input[type="text"], input[type="password"], input[type="email"] {
+    input[type="text"],
+    input[type="password"],
+    input[type="email"] {
       width: 100%;
       padding: 0.9rem;
       margin-bottom: 1.2rem;
@@ -98,3 +70,202 @@
       font-size: 1rem;
       transition: border 0.2s ease, box-shadow 0.2s ease;
     }
+
+    input:focus {
+      outline: none;
+      border-color: #51cf66;
+      box-shadow: 0 0 4px rgba(81, 207, 102, 0.4);
+    }
+
+    button {
+      width: 100%;
+      padding: 0.9rem;
+      background: linear-gradient(90deg, #69db7c, #40c057);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(90deg, #40c057, #2f9e44);
+      transform: scale(1.02);
+    }
+
+    .register-link {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.95rem;
+    }
+
+    .register-link a {
+      color: #40c057;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .register-link a:hover {
+      text-decoration: underline;
+    }
+
+    .error {
+      color: #e03131;
+      margin-top: .6rem;
+      font-size: .9rem;
+      text-align: center;
+    }
+
+    /* 🔒 Register modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      position: relative;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 1.2rem;
+      color: #555;
+      cursor: pointer;
+    }
+
+    .close-btn:hover {
+      color: #000;
+    }
+
+    /* 📱 Responsive */
+    @media (max-width: 900px) {
+      body {
+        flex-direction: column;
+      }
+      .left {
+        height: 40vh;
+        width: 100%;
+      }
+      .right {
+        height: auto;
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Left: Background image -->
+  <div class="left"></div>
+
+  <!-- Right: Login form -->
+  <div class="right">
+    <div class="login-box">
+      <h2>Sign in to Monitor</h2>
+      <input type="text" id="username" placeholder="Username" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <button onclick="login()">Login</button>
+      <div class="error" id="errorMsg"></div>
+      <div class="register-link">
+        Don’t have an account? <a href="#" onclick="openRegister()">Register here</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Registration Modal -->
+  <div class="modal" id="registerModal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeRegister()">&times;</span>
+      <h2 style="text-align:center;">Register Account</h2>
+      <input type="text" id="regUsername" placeholder="Create Username" required />
+      <input type="email" id="regEmail" placeholder="Email" required />
+      <input type="password" id="regPassword" placeholder="Create Password" required />
+      <button onclick="register()">Register</button>
+      <div class="error" id="registerMsg"></div>
+    </div>
+  </div>
+
+  <script>
+    // Redirect if already logged in
+    if (localStorage.getItem("loggedIn") === "true") {
+      window.location.href = "monitor.html";
+    }
+
+    // Login logic
+    function login() {
+      const user = document.getElementById('username').value;
+      const pass = document.getElementById('password').value;
+      const error = document.getElementById('errorMsg');
+
+      // Retrieve saved user data from localStorage
+      const savedUser = localStorage.getItem("user");
+      const savedPass = localStorage.getItem("pass");
+
+      if ((user === "admin" && pass === "cacao123") || (user === savedUser && pass === savedPass)) {
+        localStorage.setItem("loggedIn", "true");
+        window.location.href = "monitor.html";
+      } else {
+        error.textContent = "Invalid credentials. Please try again.";
+      }
+    }
+
+    // Register modal control
+    function openRegister() {
+      document.getElementById("registerModal").style.display = "flex";
+    }
+
+    function closeRegister() {
+      document.getElementById("registerModal").style.display = "none";
+    }
+
+    // Register new user
+    function register() {
+      const username = document.getElementById("regUsername").value;
+      const email = document.getElementById("regEmail").value;
+      const password = document.getElementById("regPassword").value;
+      const msg = document.getElementById("registerMsg");
+
+      if (!username || !email || !password) {
+        msg.textContent = "All fields are required.";
+        return;
+      }
+
+      localStorage.setItem("user", username);
+      localStorage.setItem("email", email);
+      localStorage.setItem("pass", password);
+
+      msg.style.color = "#40c057";
+      msg.textContent = "Registration successful! You can now log in.";
+      setTimeout(() => {
+        closeRegister();
+      }, 1500);
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      const modal = document.getElementById("registerModal");
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    };
+  </script>
+</body>
+</html>
+
