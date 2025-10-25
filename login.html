@@ -3,42 +3,50 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login • Cacao Drying Monitoring</title>
+  <title>Login • CacaoTech Monitoring System</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary: #0077b6;
+      --accent: #0096c7;
+      --success: #40c057;
+      --error: #e03131;
+      --bg-light: #f5f7fa;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      font-family: 'Inter', sans-serif;
     }
 
     body {
-      font-family: 'Inter', sans-serif;
       display: flex;
       height: 100vh;
-      background-color: #f5f7fa;
+      background-color: var(--bg-light);
     }
 
-    /* 🌅 Left side background image */
+    /* 🌅 Left Image */
     .left {
       flex: 1;
-      background: 
+      background:
         linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
         url('https://raw.githubusercontent.com/f-238/cacao-drying-monitor/main/cacao.png') center center / cover no-repeat;
     }
 
-    /* 🌞 Right side login section */
+    /* 🌞 Right Login Area */
     .right {
       flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: #ffffff;
+      background: #fff;
       padding: 2rem;
     }
 
     .login-box {
-      background: #ffffff;
+      background: #fff;
       border-radius: 16px;
       padding: 2.5rem;
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
@@ -54,7 +62,7 @@
 
     .login-box h2 {
       text-align: center;
-      color: #333;
+      color: var(--primary);
       font-weight: 600;
       margin-bottom: 1.5rem;
     }
@@ -73,14 +81,14 @@
 
     input:focus {
       outline: none;
-      border-color: #51cf66;
-      box-shadow: 0 0 4px rgba(81, 207, 102, 0.4);
+      border-color: var(--primary);
+      box-shadow: 0 0 4px rgba(0, 119, 182, 0.4);
     }
 
     button {
       width: 100%;
       padding: 0.9rem;
-      background: linear-gradient(90deg, #69db7c, #40c057);
+      background: var(--primary);
       border: none;
       border-radius: 8px;
       color: #fff;
@@ -91,7 +99,7 @@
     }
 
     button:hover {
-      background: linear-gradient(90deg, #40c057, #2f9e44);
+      background: var(--accent);
       transform: scale(1.02);
     }
 
@@ -102,7 +110,7 @@
     }
 
     .register-link a {
-      color: #40c057;
+      color: var(--primary);
       text-decoration: none;
       font-weight: 600;
     }
@@ -112,13 +120,13 @@
     }
 
     .error {
-      color: #e03131;
+      color: var(--error);
       margin-top: .6rem;
       font-size: .9rem;
       text-align: center;
     }
 
-    /* 🔒 Register modal */
+    /* 🔒 Register Modal */
     .modal {
       display: none;
       position: fixed;
@@ -130,6 +138,7 @@
       background: rgba(0, 0, 0, 0.5);
       justify-content: center;
       align-items: center;
+      animation: fadeIn 0.3s ease;
     }
 
     .modal-content {
@@ -140,6 +149,17 @@
       max-width: 400px;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
       position: relative;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
 
     .close-btn {
@@ -172,16 +192,16 @@
   </style>
 </head>
 <body>
-  <!-- Left: Background image -->
+  <!-- Left background -->
   <div class="left"></div>
 
-  <!-- Right: Login form -->
+  <!-- Right login form -->
   <div class="right">
     <div class="login-box">
-      <h2>Sign in to Monitor</h2>
+      <h2>Welcome to CacaoTech</h2>
       <input type="text" id="username" placeholder="Username" required />
       <input type="password" id="password" placeholder="Password" required />
-      <button onclick="login()">Login</button>
+      <button onclick="login()">Sign In</button>
       <div class="error" id="errorMsg"></div>
       <div class="register-link">
         Don’t have an account? <a href="#" onclick="openRegister()">Register here</a>
@@ -193,10 +213,10 @@
   <div class="modal" id="registerModal">
     <div class="modal-content">
       <span class="close-btn" onclick="closeRegister()">&times;</span>
-      <h2 style="text-align:center;">Register Account</h2>
-      <input type="text" id="regUsername" placeholder="Create Username" required />
+      <h2 style="text-align:center; color: var(--primary); margin-bottom:1rem;">Create Account</h2>
+      <input type="text" id="regUsername" placeholder="Username" required />
       <input type="email" id="regEmail" placeholder="Email" required />
-      <input type="password" id="regPassword" placeholder="Create Password" required />
+      <input type="password" id="regPassword" placeholder="Password" required />
       <button onclick="register()">Register</button>
       <div class="error" id="registerMsg"></div>
     </div>
@@ -204,29 +224,28 @@
 
   <script>
     // Redirect if already logged in
-    if (localStorage.getItem("loggedIn") === "true") {
+    if (localStorage.getItem("username")) {
       window.location.href = "monitor.html";
     }
 
-    // Login logic
+    // 🟢 Login function
     function login() {
-      const user = document.getElementById('username').value;
-      const pass = document.getElementById('password').value;
-      const error = document.getElementById('errorMsg');
+      const user = document.getElementById("username").value.trim();
+      const pass = document.getElementById("password").value.trim();
+      const error = document.getElementById("errorMsg");
 
-      // Retrieve saved user data from localStorage
       const savedUser = localStorage.getItem("user");
-      const savedPass = localStorage.getItem("pass");
+      const savedPass = atob(localStorage.getItem("pass") || "");
 
       if ((user === "admin" && pass === "cacao123") || (user === savedUser && pass === savedPass)) {
-        localStorage.setItem("loggedIn", "true");
+        localStorage.setItem("username", user);
         window.location.href = "monitor.html";
       } else {
-        error.textContent = "Invalid credentials. Please try again.";
+        error.textContent = "Invalid username or password.";
       }
     }
 
-    // Register modal control
+    // 🔹 Register Modal Controls
     function openRegister() {
       document.getElementById("registerModal").style.display = "flex";
     }
@@ -235,11 +254,11 @@
       document.getElementById("registerModal").style.display = "none";
     }
 
-    // Register new user
+    // 🔹 Register function
     function register() {
-      const username = document.getElementById("regUsername").value;
-      const email = document.getElementById("regEmail").value;
-      const password = document.getElementById("regPassword").value;
+      const username = document.getElementById("regUsername").value.trim();
+      const email = document.getElementById("regEmail").value.trim();
+      const password = document.getElementById("regPassword").value.trim();
       const msg = document.getElementById("registerMsg");
 
       if (!username || !email || !password) {
@@ -249,17 +268,14 @@
 
       localStorage.setItem("user", username);
       localStorage.setItem("email", email);
-      localStorage.setItem("pass", password);
-
-      msg.style.color = "#40c057";
-      msg.textContent = "Registration successful! You can now log in.";
-      setTimeout(() => {
-        closeRegister();
-      }, 1500);
+      localStorage.setItem("pass", btoa(password)); // Encode password
+      msg.style.color = var(--success);
+      msg.textContent = "✅ Registration successful! Please log in.";
+      setTimeout(() => closeRegister(), 1500);
     }
 
-    // Close modal when clicking outside
-    window.onclick = function(event) {
+    // 🔹 Close modal when clicking outside
+    window.onclick = function (event) {
       const modal = document.getElementById("registerModal");
       if (event.target === modal) {
         modal.style.display = "none";
