@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login • CacaoTech Monitoring System</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
   <style>
     :root {
       --primary: #0077b6;
@@ -27,7 +28,7 @@
       background-color: var(--bg-light);
     }
 
-    /* 🌅 Left Image */
+    /* Left Image */
     .left {
       flex: 1;
       background:
@@ -35,7 +36,7 @@
         url('https://raw.githubusercontent.com/f-238/cacao-drying-monitor/main/cacao.png') center center / cover no-repeat;
     }
 
-    /* 🌞 Right Login Area */
+    /* Right Login Section */
     .right {
       flex: 1;
       display: flex;
@@ -67,9 +68,7 @@
       margin-bottom: 1.5rem;
     }
 
-    input[type="text"],
-    input[type="password"],
-    input[type="email"] {
+    input[type="text"], input[type="password"], input[type="email"] {
       width: 100%;
       padding: 0.9rem;
       margin-bottom: 1.2rem;
@@ -126,7 +125,7 @@
       text-align: center;
     }
 
-    /* 🔒 Register Modal */
+    /* Register Modal */
     .modal {
       display: none;
       position: fixed;
@@ -175,19 +174,10 @@
       color: #000;
     }
 
-    /* 📱 Responsive */
     @media (max-width: 900px) {
-      body {
-        flex-direction: column;
-      }
-      .left {
-        height: 40vh;
-        width: 100%;
-      }
-      .right {
-        height: auto;
-        padding: 1.5rem;
-      }
+      body { flex-direction: column; }
+      .left { height: 40vh; width: 100%; }
+      .right { height: auto; padding: 1.5rem; }
     }
   </style>
 </head>
@@ -223,12 +213,12 @@
   </div>
 
   <script>
-    // Redirect if already logged in
+    // ✅ Redirect if already logged in
     if (localStorage.getItem("username")) {
       window.location.href = "monitor.html";
     }
 
-    // 🟢 Login function
+    // ✅ Login Function
     function login() {
       const user = document.getElementById("username").value.trim();
       const pass = document.getElementById("password").value.trim();
@@ -245,7 +235,7 @@
       }
     }
 
-    // 🔹 Register Modal Controls
+    // ✅ Open/Close Register Modal
     function openRegister() {
       document.getElementById("registerModal").style.display = "flex";
     }
@@ -254,33 +244,7 @@
       document.getElementById("registerModal").style.display = "none";
     }
 
-    // 🔹 Register function
+    // ✅ Register Function
     function register() {
       const username = document.getElementById("regUsername").value.trim();
-      const email = document.getElementById("regEmail").value.trim();
-      const password = document.getElementById("regPassword").value.trim();
-      const msg = document.getElementById("registerMsg");
-
-      if (!username || !email || !password) {
-        msg.textContent = "All fields are required.";
-        return;
-      }
-
-      localStorage.setItem("user", username);
-      localStorage.setItem("email", email);
-      localStorage.setItem("pass", btoa(password)); // Encode password
-      msg.style.color = var(--success);
-      msg.textContent = "✅ Registration successful! Please log in.";
-      setTimeout(() => closeRegister(), 1500);
-    }
-
-    // 🔹 Close modal when clicking outside
-    window.onclick = function (event) {
-      const modal = document.getElementById("registerModal");
-      if (event.target === modal) {
-        modal.style.display = "none";
-      }
-    };
-  </script>
-</body>
-</html>
+      const email = document.getElementById("
