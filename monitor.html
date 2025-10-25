@@ -1,190 +1,217 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Cacao Drying Monitor Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta charset="UTF-8" />
+  <title>CacaoTech Monitor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
   <style>
+    :root {
+      --primary: #0077b6;
+      --light-bg: #f9f9f9;
+      --text-dark: #222;
+      --text-light: #555;
+    }
+
     * {
       box-sizing: border-box;
+      font-family: "Inter", sans-serif;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      font-family: 'Inter', sans-serif;
-      margin: 0;
-      background: #fff;
-      color: #000;
       display: flex;
-      height: 100vh;
-      overflow: hidden;
+      min-height: 100vh;
+      color: var(--text-dark);
+      background: #fff;
     }
 
-    /* Sidebar */
+    /* 🔹 Sidebar */
     .sidebar {
-      width: 220px;
-      background: #f5f5f5;
+      width: 240px;
+      background: var(--light-bg);
       display: flex;
       flex-direction: column;
-      align-items: center;
-      border-right: 1px solid #ccc;
-      height: 100vh;
-      overflow-y: auto;
-      position: fixed;
-      top: 0;
-      left: 0;
+      align-items: flex-start;
       padding-top: 1rem;
+      border-right: 1px solid #ddd;
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar.collapsed {
+      transform: translateX(-100%);
+    }
+
+    .sidebar h2 {
+      text-align: center;
+      width: 100%;
+      font-size: 1.2rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
     }
 
     .sidebar a {
-      color: #333;
+      color: var(--text-dark);
       text-decoration: none;
-      padding: 1rem;
+      padding: 1rem 2rem;
       width: 100%;
       display: flex;
-      justify-content: flex-start;
       align-items: center;
       gap: 10px;
       font-size: 1rem;
-      padding-left: 2rem;
-      transition: background 0.2s, color 0.2s;
+      transition: all 0.2s ease;
     }
 
     .sidebar a:hover, .sidebar a.active {
-      background: #ddd;
-      color: #000;
+      background: var(--primary);
+      color: #fff;
     }
 
     .sidebar a#logout-btn {
       color: #d00000;
-      font-weight: bold;
+      font-weight: 600;
       margin-top: auto;
       border-top: 1px solid #ccc;
       width: 100%;
-      text-align: left;
     }
 
-    /* Main Area */
+    /* 🔹 Main Content */
     .main {
-      margin-left: 220px;
-      padding: 2rem;
       flex: 1;
       display: flex;
       flex-direction: column;
       height: 100vh;
-      overflow-y: auto;
+      overflow: hidden;
     }
 
     header {
-      background: radial-gradient(circle at center, #fff, #a2d2ff, #b5ead7);
-      color: #000;
-      text-align: center;
-      padding: 1.5rem;
-      border-radius: 1rem;
-      font-size: 1.3rem;
-      font-weight: 600;
-      margin-bottom: 1.2rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      background: var(--primary);
+      color: white;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      font-size: clamp(1rem, 2vw, 1.4rem);
+      margin: 0;
+    }
+
+    .user-info {
+      font-size: 0.95rem;
+      opacity: 0.9;
+    }
+
+    .menu-toggle {
+      display: none;
+      font-size: 1.4rem;
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
     }
 
     #content {
       flex: 1;
-      background: #f9f9f9;
-      border-radius: 12px;
+      overflow-y: auto;
       padding: 1.5rem;
-      min-height: 70vh;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-      transition: opacity 0.3s ease-in-out;
-    }
-
-    #content > * {
-      text-align: left !important;
-      margin: 0 auto;
-      max-width: 100%;
+      background: #fff;
+      border-radius: 0;
+      transition: opacity 0.3s;
     }
 
     footer {
       text-align: center;
+      font-size: 0.9rem;
+      color: var(--text-light);
       padding: 1rem;
-      font-size: .9rem;
-      color: #666;
-      margin-top: 1rem;
+      background: #fafafa;
+      border-top: 1px solid #eee;
     }
 
+    /* 🔹 Mobile */
     @media (max-width: 768px) {
       .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-        flex-direction: row;
-        justify-content: space-around;
-        border-right: none;
-        border-bottom: 1px solid #ccc;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        z-index: 1000;
+        transform: translateX(-100%);
       }
 
-      .sidebar a {
-        padding: 0.8rem;
-        font-size: 0.9rem;
+      .sidebar.show {
+        transform: translateX(0);
+      }
+
+      .menu-toggle {
+        display: block;
       }
 
       .main {
-        margin-left: 0;
+        padding-top: 0;
+      }
+
+      #content {
         padding: 1rem;
       }
     }
   </style>
 </head>
+
 <body>
-  <div class="sidebar">
+  <!-- 🔹 Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <h2>CacaoTech</h2>
     <a href="#" data-page="dashboard.html" class="active"><i class="fas fa-chart-line"></i> Dashboard</a>
     <a href="#" data-page="overview.html"><i class="fas fa-file-alt"></i> Overview</a>
-    <a href="#" data-page="data-summary.html"><i class="fas fa-table"></i> Data&nbsp;Summary</a>
+    <a href="#" data-page="data-summary.html"><i class="fas fa-table"></i> Data Summary</a>
     <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
   </div>
 
+  <!-- 🔹 Main -->
   <div class="main">
     <header>
-      Development and Implementation of a Wireless Monitoring System for Theobroma Cacao Drying Process
+      <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+      <h1>LoRa-Based Cacao Drying Monitoring System</h1>
+      <div class="user-info" id="userInfo">Welcome, Farmer</div>
     </header>
 
     <div id="content">
       <p style="text-align:center;">Loading content...</p>
     </div>
 
-    <footer>&copy; 2025 Cacao Drying Monitoring • Powered by ThingSpeak</footer>
+    <footer>© 2025 CacaoTech | Powered by ThingSpeak</footer>
   </div>
 
   <script>
-    // Redirect to login if not logged in
-    if (localStorage.getItem("loggedIn") !== "true") {
+    // 🔹 Session Validation
+    const currentUser = localStorage.getItem("username");
+    if (!currentUser) {
       window.location.href = "login.html";
+    } else {
+      document.getElementById("userInfo").textContent = "👋 Welcome, " + currentUser;
     }
 
-    // Auto logout after 30 minutes
-    let logoutTimer;
-    function resetTimer() {
-      clearTimeout(logoutTimer);
-      logoutTimer = setTimeout(() => {
-        alert("Session expired due to inactivity.");
-        localStorage.clear();
-        window.location.href = "login.html";
-      }, 1800000); // 30 min
-    }
-    window.onload = resetTimer;
-    document.onmousemove = resetTimer;
-    document.onkeypress = resetTimer;
-    document.onclick = resetTimer;
+    // 🔹 Sidebar Toggle (mobile)
+    const sidebar = document.getElementById("sidebar");
+    const menuToggle = document.getElementById("menuToggle");
+    menuToggle.addEventListener("click", () => {
+      sidebar.classList.toggle("show");
+    });
 
-    // Dynamic loading function
+    // 🔹 Dynamic Page Loading
     async function loadPage(page) {
       const content = document.getElementById("content");
       content.style.opacity = 0.5;
       content.innerHTML = "<p style='text-align:center;'>Loading...</p>";
-
       try {
         const res = await fetch(page);
-        if (!res.ok) throw new Error("Failed to load page");
+        if (!res.ok) throw new Error("Page load failed");
         const html = await res.text();
         content.innerHTML = html;
       } catch (err) {
@@ -193,7 +220,7 @@
       content.style.opacity = 1;
     }
 
-    // Sidebar link click behavior
+    // 🔹 Sidebar Navigation
     const links = document.querySelectorAll(".sidebar a[data-page]");
     links.forEach(link => {
       link.addEventListener("click", e => {
@@ -201,19 +228,34 @@
         links.forEach(l => l.classList.remove("active"));
         link.classList.add("active");
         loadPage(link.getAttribute("data-page"));
+        if (window.innerWidth <= 768) sidebar.classList.remove("show");
       });
     });
 
-    // Load dashboard by default
+    // 🔹 Default Load Dashboard
     loadPage("dashboard.html");
 
-    // Logout
+    // 🔹 Logout
     document.getElementById("logout-btn").addEventListener("click", e => {
       e.preventDefault();
-      localStorage.clear();
+      localStorage.removeItem("username");
       window.location.href = "login.html";
     });
+
+    // 🔹 Auto-Logout after 30 min of inactivity
+    let logoutTimer;
+    function resetTimer() {
+      clearTimeout(logoutTimer);
+      logoutTimer = setTimeout(() => {
+        alert("Session expired due to inactivity.");
+        localStorage.clear();
+        window.location.href = "login.html";
+      }, 1800000);
+    }
+    window.onload = resetTimer;
+    document.onmousemove = resetTimer;
+    document.onkeypress = resetTimer;
+    document.onclick = resetTimer;
   </script>
 </body>
 </html>
-
