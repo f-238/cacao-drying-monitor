@@ -1,50 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Dashboard | Cacao Drying Monitor</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard | CacaoTech Monitor</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary: #0077b6;
+      --light-bg: #f9f9f9;
+      --text-dark: #222;
+      --text-light: #555;
+    }
+
     body {
       margin: 0;
-      font-family: 'Inter', sans-serif;
+      font-family: "Inter", sans-serif;
       background: #fff;
-      color: #000;
-      padding: 2rem;
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* 🔹 Navbar */
+    header {
+      background: var(--primary);
+      color: white;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(1.2rem, 2vw, 1.6rem);
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 1rem;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+
+    nav a:hover {
+      opacity: 0.8;
+    }
+
+    /* 🔹 Main Section */
+    main {
+      flex: 1;
+      padding: 1.5rem;
+      max-width: 1000px;
+      margin: 0 auto;
     }
 
     h2 {
-      margin: 0 0 1rem;
-      font-size: 1.8rem;
-      color: #333;
       text-align: center;
-      gap: 1.5rem;
+      margin-bottom: 0.5rem;
+      font-size: clamp(1.5rem, 4vw, 2rem);
     }
 
     p.welcome {
       text-align: center;
-      font-size: 1.1rem;
-      color: #555;
+      color: var(--text-light);
       margin-bottom: 2rem;
-      gap: 2.5rem;
+      font-size: clamp(1rem, 2vw, 1.2rem);
     }
 
+    /* 🔹 Cards Grid */
     .data-box {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 1.5rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
     }
 
     .sensor-card {
-      background: #f9f9f9;
-      padding: 1.2rem;
+      background: var(--light-bg);
+      padding: 1rem;
       border-radius: 12px;
-      border: 1px solid #ddd;
-      width: 160px;
       text-align: center;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+      border: 1px solid #ddd;
       transition: transform 0.2s ease;
     }
 
@@ -55,48 +98,76 @@
     .sensor-card h3 {
       margin: 0.4rem 0;
       font-size: 1rem;
-      color: #333;
+      color: var(--text-dark);
     }
 
     .sensor-card p {
-      font-size: 1.6rem;
+      font-size: 1.5rem;
       font-weight: bold;
-      color: #0077b6;
+      color: var(--primary);
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--text-light);
+      padding: 1rem;
+    }
+
+    /* 🔹 Mobile Adjustments */
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      nav a {
+        margin: 0 0.5rem;
+      }
     }
   </style>
 </head>
-<body>
-  <h2> 👋 Welcome, Cacao Farmer!</h2>
-  <p class="welcome"> Monitor your real-time drying conditions and ensure optimal cacao bean quality.</p>
 
-  <div class="data-box">
-    <div class="sensor-card">
-      <h3>Temperature 1</h3>
-      <p id="temperature1">--</p>
+<body>
+  <header>
+    <h1>CacaoTech Dashboard</h1>
+    <nav>
+      <a href="overview.html">Overview</a>
+      <a href="#" id="logoutBtn">Logout</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2 id="userWelcome">👋 Welcome, Cacao Farmer!</h2>
+    <p class="welcome">Monitor your real-time drying conditions and ensure optimal cacao bean quality.</p>
+
+    <div class="data-box">
+      <div class="sensor-card"><h3>Temperature 1</h3><p id="temperature1">--</p></div>
+      <div class="sensor-card"><h3>Temperature 2</h3><p id="temperature2">--</p></div>
+      <div class="sensor-card"><h3>Temperature 3</h3><p id="temperature3">--</p></div>
+      <div class="sensor-card"><h3>Moisture %</h3><p id="moisture">--</p></div>
+      <div class="sensor-card"><h3>Status</h3><p id="dryingStatus">--</p></div>
+      <div class="sensor-card"><h3>Weather</h3><p id="weather">--</p></div>
     </div>
-    <div class="sensor-card">
-      <h3>Temperature 2</h3>
-      <p id="temperature2">--</p>
-    </div>
-    <div class="sensor-card">
-      <h3>Temperature 3</h3>
-      <p id="temperature3">--</p>
-    </div>
-    <div class="sensor-card">
-      <h3>Moisture %</h3>
-      <p id="moisture">--</p>
-    </div>
-    <div class="sensor-card">
-      <h3>Status</h3>
-      <p id="dryingStatus">--</p>
-    </div>
-    <div class="sensor-card">
-      <h3>Weather</h3>
-      <p id="weather">--</p>
-    </div>
-  </div>
+
+    <footer id="updateTime">Last updated: --</footer>
+  </main>
 
   <script>
+    // 🔹 Check login session
+    const currentUser = localStorage.getItem("username");
+    if (!currentUser) {
+      window.location.href = "login.html";
+    } else {
+      document.getElementById("userWelcome").textContent = `👋 Welcome, ${currentUser}!`;
+    }
+
+    // 🔹 Logout function
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.removeItem("username");
+      window.location.href = "login.html";
+    });
+
+    // 🔹 Fetch data from ThingSpeak
     const channelID = 2770965;
     const readAPI = "LJ902FFDJSJOBZYJ";
 
@@ -112,8 +183,11 @@
       } catch (e) {
         console.error("Error fetching data:", e);
       }
+      document.getElementById("updateTime").textContent =
+        "Last updated: " + new Date().toLocaleTimeString();
     }
 
+    // 🔹 Fetch weather
     async function fetchWeather() {
       try {
         const t = await (await fetch("https://wttr.in/Talamban%20Cebu%20City?format=%t")).text();
