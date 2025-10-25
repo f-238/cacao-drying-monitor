@@ -92,11 +92,10 @@
           <th>Temp 2</th>
           <th>Temp 3</th>
           <th>Moisture</th>
-          <th>Status</th>
         </tr>
       </thead>
       <tbody>
-        <tr><td>2025-10-24</td><td>34°C</td><td>33°C</td><td>32°C</td><td>12%</td><td>Drying</td></tr>
+        <tr><td>2025-10-24</td><td>34°C</td><td>33°C</td><td>32°C</td><td>12%</td><td></tr>
       </tbody>
     </table>
     <button onclick="exportCSV()">Export CSV</button>
@@ -124,7 +123,7 @@
       const date = document.getElementById("datePicker").value;
       const display = document.getElementById("dataDisplay");
       if (date) {
-        display.innerHTML = `<p>Showing data for <strong>${date}</strong> — Temp1: 33°C, Temp2: 32°C, Temp3: 31°C, Moisture: 11%, Status: Drying</p>`;
+        display.innerHTML = `<p>Showing data for <strong>${date}</strong> — Temp1: 33°C, Temp2: 32°C, Temp3: 31°C, Moisture: 11%`;
       } else {
         display.innerHTML = `<p style='color:red;'>Please select a date first.</p>`;
       }
