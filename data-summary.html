@@ -1,44 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Data Summary</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data Summary | CacaoTech Monitor</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary: #0077b6;
+      --light-bg: #f9f9f9;
+      --text-dark: #222;
+      --text-light: #555;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Inter', sans-serif;
+      font-family: "Inter", sans-serif;
     }
 
     body {
-      background-color: #f8fafc;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
+      background-color: #fff;
       min-height: 100vh;
-      padding: 2rem;
+      display: flex;
+      flex-direction: column;
     }
 
-    .container {
-      width: 100%;
-      max-width: 900px;
+    /* 🔹 Navbar */
+    header {
+      background: var(--primary);
+      color: white;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(1.2rem, 2vw, 1.6rem);
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 1rem;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+
+    nav a:hover {
+      opacity: 0.8;
+    }
+
+    main {
+      flex: 1;
+      padding: 1.5rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+      color: var(--primary);
     }
 
     .section {
       background: #fff;
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 1.5rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.05);
       margin-bottom: 1.5rem;
-    }
-
-    .section h2 {
-      margin-bottom: 1rem;
-      color: #2f9e44;
-      text-align: center;
     }
 
     table {
@@ -51,58 +88,77 @@
       padding: 0.75rem;
       border: 1px solid #ddd;
       text-align: center;
+      font-size: 0.95rem;
     }
 
     th {
-      background-color: #f1f3f5;
+      background-color: var(--light-bg);
     }
 
     button {
-      padding: 0.6rem 1rem;
-      background: #37b24d;
+      padding: 0.6rem 1.2rem;
+      background: var(--primary);
       border: none;
       color: white;
       border-radius: 8px;
       cursor: pointer;
       transition: 0.2s ease;
       display: block;
-      margin: 0 auto;
+      margin: 0.5rem auto;
     }
 
     button:hover {
-      background: #2f9e44;
+      opacity: 0.9;
     }
 
     input[type="date"] {
-      padding: 0.5rem;
+      padding: 0.6rem;
       border-radius: 8px;
       border: 1px solid #ccc;
       display: block;
       margin: 0.5rem auto;
+      font-size: 1rem;
     }
 
     #dataDisplay {
       text-align: center;
       margin-top: 1rem;
       font-size: 1rem;
-      color: #333;
+      color: var(--text-dark);
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--text-light);
+      padding: 1rem;
     }
 
     @media (max-width: 768px) {
-      body {
+      main {
         padding: 1rem;
       }
-      .section {
-        padding: 1rem;
+      table {
+        font-size: 0.85rem;
       }
     }
   </style>
 </head>
+
 <body>
-  <div class="container">
+  <header>
+    <h1>CacaoTech Data Summary</h1>
+    <nav>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="overview.html">Overview</a>
+      <a href="#" id="logoutBtn">Logout</a>
+    </nav>
+  </header>
+
+  <main>
     <div class="section">
       <h2>Daily Summary</h2>
-      <table>
+      <table id="summaryTable">
         <thead>
           <tr>
             <th>Date</th>
@@ -113,15 +169,8 @@
             <th>Status</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>2025-10-24</td>
-            <td>34°C</td>
-            <td>33°C</td>
-            <td>32°C</td>
-            <td>12%</td>
-            <td>Drying</td>
-          </tr>
+        <tbody id="summaryBody">
+          <tr><td colspan="6">Loading data...</td></tr>
         </tbody>
       </table>
       <button onclick="exportCSV()">Export CSV</button>
@@ -129,31 +178,113 @@
 
     <div class="section">
       <h2>Historical Data Viewer</h2>
-      <input type="date" id="datePicker">
+      <input type="date" id="datePicker" />
       <button onclick="viewData()">View Data</button>
       <div id="dataDisplay"></div>
     </div>
-  </div>
+  </main>
+
+  <footer>
+    <p>© 2025 CacaoTech | LoRa-Based Cacao Drying Monitoring System</p>
+  </footer>
 
   <script>
+    // 🔹 Session check
+    const currentUser = localStorage.getItem("username");
+    if (!currentUser) {
+      window.location.href = "login.html";
+    }
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.removeItem("username");
+      window.location.href = "login.html";
+    });
+
+    // 🔹 ThingSpeak API Setup
+    const channelID = 2770965;
+    const readAPI = "LJ902FFDJSJOBZYJ";
+    const summaryBody = document.getElementById("summaryBody");
+
+    // 🔹 Fetch and Display Summary
+    async function loadSummary() {
+      try {
+        const url = `https://api.thingspeak.com/channels/${channelID}/feeds.json?api_key=${readAPI}&results=10`;
+        const data = await (await fetch(url)).json();
+        const feeds = data.feeds;
+
+        summaryBody.innerHTML = "";
+        feeds.slice(-5).forEach(feed => {
+          const date = new Date(feed.created_at).toLocaleDateString();
+          const row = `
+            <tr>
+              <td>${date}</td>
+              <td>${feed.field1 || "--"}°C</td>
+              <td>${feed.field2 || "--"}°C</td>
+              <td>${feed.field3 || "--"}°C</td>
+              <td>${feed.field4 || "--"}%</td>
+              <td>${feed.field9 || "N/A"}</td>
+            </tr>`;
+          summaryBody.innerHTML += row;
+        });
+      } catch (err) {
+        summaryBody.innerHTML = `<tr><td colspan="6">Error loading data.</td></tr>`;
+      }
+    }
+
+    loadSummary();
+
+    // 🔹 Export CSV
     function exportCSV() {
-      const csv = "Date,Temp1,Temp2,Temp3,Moisture,Status\n2025-10-24,34,33,32,12%,Drying";
+      const rows = [["Date","Temp1","Temp2","Temp3","Moisture","Status"]];
+      document.querySelectorAll("#summaryBody tr").forEach(tr => {
+        const cols = Array.from(tr.children).map(td => td.textContent);
+        rows.push(cols);
+      });
+      const csv = rows.map(e => e.join(",")).join("\n");
       const blob = new Blob([csv], { type: "text/csv" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "cacao_drying_data.csv";
+      a.download = "cacao_drying_summary.csv";
       a.click();
     }
 
-    function viewData() {
+    // 🔹 View Historical Data by Date
+    async function viewData() {
       const date = document.getElementById("datePicker").value;
       const display = document.getElementById("dataDisplay");
-      if (date) {
-        display.innerHTML = `<p>Showing data for <strong>${date}</strong> — Temp1: 33°C, Temp2: 32°C, Temp3: 31°C, Moisture: 11%, Status: Drying</p>`;
-      } else {
+      if (!date) {
         display.innerHTML = `<p style='color:red;'>Please select a date first.</p>`;
+        return;
       }
+
+      try {
+        const url = `https://api.thingspeak.com/channels/${channelID}/feeds.json?api_key=${readAPI}`;
+        const data = await (await fetch(url)).json();
+        const feeds = data.feeds.filter(f => f.created_at.startsWith(date));
+
+        if (feeds.length > 0) {
+          const avgT1 = avg(feeds.map(f => parseFloat(f.field1) || 0));
+          const avgT2 = avg(feeds.map(f => parseFloat(f.field2) || 0));
+          const avgT3 = avg(feeds.map(f => parseFloat(f.field3) || 0));
+          const avgMoist = avg(feeds.map(f => parseFloat(f.field4) || 0));
+          display.innerHTML = `
+            <p><strong>${date}</strong> Averages — 
+            Temp1: ${avgT1.toFixed(1)}°C, 
+            Temp2: ${avgT2.toFixed(1)}°C, 
+            Temp3: ${avgT3.toFixed(1)}°C, 
+            Moisture: ${avgMoist.toFixed(1)}%</p>`;
+        } else {
+          display.innerHTML = `<p>No records found for this date.</p>`;
+        }
+      } catch (err) {
+        display.innerHTML = `<p style='color:red;'>Error retrieving data.</p>`;
+      }
+    }
+
+    function avg(arr) {
+      const valid = arr.filter(v => !isNaN(v));
+      return valid.length ? valid.reduce((a,b) => a+b,0) / valid.length : 0;
     }
   </script>
 </body>
