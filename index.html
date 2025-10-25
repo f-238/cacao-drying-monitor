@@ -6,14 +6,14 @@
   <title>CacaoTech • Login</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
-  <!-- ✅ PWA Integration -->
+  <!-- PWA Integration -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0077b6">
   <script>
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("service-worker.js")
         .then(() => console.log("✅ Service Worker registered"))
-        .catch(err => console.log("❌ Service Worker failed:", err));
+        .catch(err => console.log("❌ SW Registration Failed:", err));
     }
   </script>
 
@@ -34,7 +34,6 @@
       background-color: var(--bg-light);
     }
 
-    /* 🌅 Left side image */
     .left {
       flex: 1;
       background:
@@ -42,7 +41,6 @@
         url('https://raw.githubusercontent.com/f-238/cacao-drying-monitor/main/cacao.png') center center / cover no-repeat;
     }
 
-    /* 🌞 Right login section */
     .right {
       flex: 1;
       display: flex;
@@ -138,10 +136,8 @@
   </style>
 </head>
 <body>
-  <!-- Left background -->
   <div class="left"></div>
 
-  <!-- Right login form -->
   <div class="right">
     <div class="login-box">
       <h2>Welcome to CacaoTech</h2>
@@ -161,7 +157,6 @@
       window.location.href = "monitor.html";
     }
 
-    // Login Logic
     function login() {
       const user = document.getElementById("username").value.trim();
       const pass = document.getElementById("password").value.trim();
@@ -170,7 +165,15 @@
       const savedUser = localStorage.getItem("user");
       const savedPass = atob(localStorage.getItem("pass") || "");
 
-      if ((user === "admin" && pass === "cacao123") || (user === savedUser && pass === savedPass)) {
+      // ✅ Always allow admin / cacao123
+      if (user === "admin" && pass === "cacao123") {
+        localStorage.setItem("username", "admin");
+        window.location.href = "monitor.html";
+        return;
+      }
+
+      // ✅ Registered users
+      if (user === savedUser && pass === savedPass) {
         localStorage.setItem("username", user);
         window.location.href = "monitor.html";
       } else {
