@@ -6,42 +6,48 @@
   <title>Thesis Overview</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
 
     body {
-      background-color: #ffffff;
-      color: #222;
-      padding: 2rem;
+      background-color: #f8fafc;
       display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      min-height: 100%;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding: 1rem;
     }
 
     .content {
-      background: #f9f9f9;
-      border-radius: 12px;
+      background: #fff;
+      border-radius: 10px;
       padding: 2rem;
-      max-width: 100%;
-      width: 100%;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+      max-width: 700px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
     }
 
     .content h2 {
       margin-bottom: 1rem;
       color: #2f9e44;
-      font-size: 1.5rem;
-      border-bottom: 2px solid #2f9e44;
-      display: inline-block;
-      padding-bottom: 0.3rem;
+      font-size: 1.6rem;
     }
 
     .content p {
-      font-size: 1.1rem;
-      line-height: 1.7;
-      color: #444;
-      margin-top: 0.8rem;
-      text-align: justify;
+      color: #333;
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .content {
+        padding: 1.5rem;
+        font-size: 0.95rem;
+      }
     }
   </style>
 </head>
@@ -49,7 +55,8 @@
   <div class="content">
     <h2>Thesis Overview</h2>
     <p>
-      This study focuses on developing and implementing a wireless monitoring system for Theobroma cacao drying process using LoRa communication. The system tracks temperature, humidity, and moisture content in real time to optimize drying efficiency and preserve cacao bean quality.
+      This study focuses on developing and implementing a wireless monitoring system for <i>Theobroma cacao</i> drying process using LoRa communication. 
+      The system tracks temperature, humidity, and moisture content in real time to optimize drying efficiency and preserve cacao bean quality.
     </p>
   </div>
 </body>
